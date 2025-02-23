@@ -1,0 +1,225 @@
+/* Container styling */
+.egfr-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Poppins', sans-serif;  }
+  
+
+  
+  
+  /* Input fields */
+  .egfr-input {
+    width: 100%;
+    padding: 12px;
+    margin: 12px 0;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease;
+  }
+  
+  .egfr-input:focus {
+    background-color: #fff;
+    border-color: #28a745;
+    outline: none;
+  }
+  
+  /* Button */
+  .report-button {
+    width: 30%;
+    padding: 12px;
+    background-color: #429e36;
+    margin-right: 5px;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    margin-bottom: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .report-button:hover {
+    background-color: #218838;
+  }
+   /* Button */
+   .clear-button {
+    width: 30%;
+    padding: 12px;
+    background-color: #ac3020;
+    margin-right: 5px;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    margin-bottom: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .clear-button:hover {
+    background-color: #882121;
+  }
+   /* Button */
+   .goto-button {
+    width: 30%;
+    padding: 12px;
+    background-color: #008CBA;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    margin-bottom: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .goto-button:hover {
+    background-color: #2f8ba1;
+  }
+   /* Button */
+   .print-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    margin-bottom: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .print-button:hover {
+    background-color: #218838;
+  }
+   /* Button */
+   .upload-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    margin-bottom: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .upload-button:hover {
+    background-color: #218838;
+  }
+  
+  /* Report styling */
+  .report-container {
+    margin-top: 25px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .report-container h3 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .report-container p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 10px;
+  }
+  
+  .report-container p strong {
+    color: #333;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .egfr-container {
+      padding: 15px;
+    }
+  
+    .egfr-input,
+    .egfr-button {
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .egfr-container {
+      padding: 10px;
+    }
+  
+    .egfr-input,
+    .egfr-button {
+      font-size: 12px;
+    }
+  
+    .report-container p {
+      font-size: 14px;
+    }
+  }
+   /* Button */
+   .print-button {
+    width: 30%;
+    padding: 12px;
+    background-color:  #007bb5;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    margin-right: 5px;    cursor: pointer;
+    font-size: 18px;
+    margin-bottom: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .print-button:hover {
+    background-color: #106e99;;
+  }
+  
+  .upload-button {
+    width: 30%;
+    padding: 12px;
+    background-color: #007bb5;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    margin-bottom: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .upload-button:hover {
+    background-color: #216288;
+  }
+  
+  .go-to-calculation-btn{
+    width: 30%;
+    padding: 12px;
+    background-color: #007bb5;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    margin-bottom: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .go-to-calculation-btn{
+    background-color: #216288;
+  }
+.title {
+    text-align: center;
+    font-size: 2em;
+    color: #4CAF50;
+    margin-bottom: 30px;
+  }

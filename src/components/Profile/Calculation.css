@@ -1,0 +1,55 @@
+/* src/components/Calculation.css */
+
+.container {
+    display: flex;
+    height: 100vh; /* Full height of the viewport */
+  }
+  
+  .main-content {
+    flex: 1; /* Take up remaining space */
+    padding: 20px; /* Padding around the content */
+    background-color: #f4f4f4; /* Light background color */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    border-radius: 8px; /* Rounded corners */
+    overflow-y: auto; /* Allow scrolling if content overflows */
+  }
+  
+  .welcome-header {
+    font-size: 28px; /* Larger font size for the header */
+    color: #34495e; /* Dark color for the header */
+    margin-bottom: 10px; /* Space below the header */
+  }
+  
+  .welcome-text {
+    font-size: 16px; /* Standard font size for text */
+    color: #7f8c8d; /* Grey color for the text */
+    margin-bottom: 20px; /* Space below the text */
+  }
+  
+  .button-container {
+    display: flex; /* Use flexbox for button layout */
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 10px; /* Space between buttons */
+  }
+  
+  .button {
+    background-color: #3498db; /* Primary button color */
+    color: white; /* Text color */
+    border: none; /* No border */
+    padding: 10px 10px; /* Padding inside the button */
+    cursor: pointer; /* Pointer cursor on hover */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+    font-size: 16px; /* Font size for button text */
+    display: flex; /* Flexbox for icon and text */
+    align-items: center; /* Center items vertically */
+  }
+  
+  .button:hover {
+    background-color: #2980b9; /* Darker shade on hover */
+  }
+  
+  .button:disabled {
+    background-color: #bdc3c7; /* Grey color for disabled buttons */
+    cursor: not-allowed; /* Not-allowed cursor for disabled buttons */
+  }

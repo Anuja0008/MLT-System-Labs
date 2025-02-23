@@ -1,0 +1,149 @@
+.bun-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .bun-container .title {
+    text-align: center;
+    font-size: 2em;
+    color: #4CAF50;
+    margin-bottom: 30px;
+  }
+  
+  .bun-container .calculation-section {
+    margin-bottom: 40px;
+  }
+  
+  .bun-container .input-card,
+  .bun-container .report-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .bun-container h3 {
+    color: #333;
+    font-size: 1.6em;
+    margin-bottom: 15px;
+  }
+  
+  .bun-container .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .bun-container label {
+    font-weight: bold;
+    color: #555;
+    font-size: 1em;
+  }
+  
+  .bun-container input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+  }
+  
+  .bun-container input:read-only {
+    background-color: #f4f4f4;
+  }
+  
+  .bun-container button {
+    width: 30%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 5px;
+    margin-left: 5px;
+  }
+  
+  .bun-container .green-btn {
+    background-color: #4CAF50;
+    color: white;
+
+  }
+  
+  .bun-container .green-btn:hover {
+    background-color: #45a049;
+  }
+  
+  .bun-container .blue-btn {
+    background-color: #008CBA;
+    color: white;
+  }
+  
+  .bun-container .blue-btn:hover {
+    background-color: #007bb5;
+  }
+  
+  .bun-container .red-btn {
+    background-color: #f44336;
+    color: white;
+    margin-bottom: 15px;
+  }
+  
+  .bun-container .red-btn:hover {
+    background-color: #e03e2d;
+  }
+  
+  .bun-container .report-detail {
+    font-size: 1.1em;
+    line-height: 1.6;
+  }
+  
+  .bun-container .report-title {
+    color: #333;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+  }
+  
+  .bun-container .report-section {
+    margin-top: 40px;
+  }
+  
+  .bun-container .report-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .bun-container button:focus {
+    outline: none;
+  }
+  .bun-container {
+  position: relative; /* To position the button within this container */
+}
+
+.bun-container .home-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.bun-container .home-btn:hover {
+  background-color: #45a049;
+}
+.go-to-calculation-btn
+{
+    background-color: #008CBA;
+    color: white;
+}

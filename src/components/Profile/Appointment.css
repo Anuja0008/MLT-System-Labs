@@ -1,0 +1,97 @@
+/* Appointments.css */
+
+.latest-appointment {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .latest-appointment table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .latest-appointment th, .latest-appointment td {
+    border: 1px solid #bdc3c7;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .latest-appointment th {
+    background-color: #2980b9;
+    color: white;
+  }
+  
+  .appointment-history {
+    margin-bottom: 20px;
+  }
+  
+  .booking-form {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .booking-form div {
+    margin-bottom: 15px;
+  }
+  
+  .booking-form label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .booking-form input[type="text"],
+  .booking-form input[type="date"],
+  .booking-form select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 5px;
+  }
+  
+  .booking-form button {
+    padding: 10px 15px;
+    background-color: #2980b9;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .booking-form button:hover {
+    background-color: #1a6a9a;
+  }
+
+
+
+
+
+/* Styles for the delete button */
+.delete-button {
+  margin-left: 50px;
+  margin-bottom: 5px;
+  padding: 5px 10px;
+  background-color: #e74c3c; /* Red background */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background-color: #c0392b; /* Darker red on hover */
+}
+/* Appointments.css */
+/* Appointments.css */
+
+.latest-appointment {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1)
+}
