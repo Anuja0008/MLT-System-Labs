@@ -1,6 +1,6 @@
 export const sidebarStyle = {
     width: "250px",
-    background: "#2c3e50",
+    background: " #4eb13b",
     color: "white",
     padding: "20px",
     display: "flex",
@@ -35,9 +35,9 @@ export const sidebarStyle = {
   };
   
   export const menuItemStyle = {
-    padding: "12px 20px",
-    background: "#34495e",
-    color: "white",
+    padding: "18px 20px",
+    background: "#a8e3a8",
+    color: "Black",
     borderRadius: "5px",
     cursor: "pointer",
     display: "flex",
@@ -45,7 +45,7 @@ export const sidebarStyle = {
     fontSize: "16px",
     transition: "background 0.3s, transform 0.2s",
     ':hover': {
-      background: "#1abc9c",
+      background: "#55c95c",
       transform: "translateX(5px)",
     },
   };

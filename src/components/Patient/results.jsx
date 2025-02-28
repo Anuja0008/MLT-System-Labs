@@ -72,6 +72,7 @@ const Result = () => {
           <option value="egfr">EGFR</option>
           <option value="Blood Urea Nitrogen">Bun</option>
           <option value="Insulin Dose Calculator">Insulin Dose Calculator</option>
+          <option value="International Normalized Ratio (INR)">International Normalized Ratio (INR)</option>
           {/* Add more options if needed */}
         </select>
       </div>

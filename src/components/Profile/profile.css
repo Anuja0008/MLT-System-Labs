@@ -3,7 +3,15 @@
 body {
   margin: 0;
   font-family: 'Arial', sans-serif;
-  background-color: #f4f4f4;
+
+  /* Remove the background color */
+  background-color: transparent;
+
+  /* Add the background image */
+  background-image: url('../../Photos/checkup1.jpg'); /* Replace with your image path */
+  background-size: cover; /* Ensure the image covers the entire screen */
+  background-position: center center; /* Center the background image */
+  background-attachment: fixed; /* Keep the background fixed when scrolling */
 }
 
 .container {
@@ -31,7 +39,7 @@ body {
   overflow-y: auto;
 }
 
-.welcome-header {
+.welcome-header0 {
   font-size: 28px;
   color: #34495e;
 }
@@ -42,7 +50,17 @@ body {
 }
 
 .button {
-  background-color: #3498db;
+  background-color: #4eb13b;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+.d-button {
+  background-color: #b61313;
   color: white;
   border: none;
   padding: 10px 15px;
@@ -57,21 +75,24 @@ body {
 }
 
 .appointment-card {
-  background-color: #ecf0f1;
+  background-color: #cbcecb;
   border-radius: 5px;
   padding: 15px;
   margin: 10px 0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  
 }
 
 .appointment-card h3 {
   margin: 0;
   color: #34495e;
+  margin-bottom: 8px;
 }
 
 .appointment-card p {
   margin: 5px 0;
-  color: #7f8c8d;
+  color: #383838;
+  margin-bottom: 8px;
 }
 
 .input-field {

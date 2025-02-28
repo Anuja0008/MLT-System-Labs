@@ -20,7 +20,7 @@
   }
   
   .latest-appointment th {
-    background-color: #2980b9;
+    background-color: #4da140;
     color: white;
   }
   
@@ -55,7 +55,7 @@
   
   .booking-form button {
     padding: 10px 15px;
-    background-color: #2980b9;
+    background-color: #4da140;
     color: white;
     border: none;
     border-radius: 5px;

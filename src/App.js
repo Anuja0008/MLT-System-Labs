@@ -13,6 +13,9 @@ import ForgetPassword from './components/Authentication/forgetpassword';
 import RESULT from './components/Patient/results';
 // import Chatbot from './components/Home1/chatbot';
 import IDC from './components/Calculations/idc';
+import INR from './components/Calculations/inr';
+
+
 const App = () => {
   return (
     <Router>
@@ -33,6 +36,7 @@ const App = () => {
       <Route path="/RESULT" element={<RESULT />} />
       {/* <Route path="/Chatbot" element={<Chatbot />} /> */}
       <Route path="/IDC" element={<IDC />} />
+      <Route path="/INR" element={<INR />} />
       
 
 

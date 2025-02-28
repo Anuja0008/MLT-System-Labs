@@ -14,15 +14,15 @@
     overflow-y: auto; /* Allow scrolling if content overflows */
   }
   
-  .welcome-header {
+  .welcome-header1 {
     font-size: 28px; /* Larger font size for the header */
-    color: #34495e; /* Dark color for the header */
+    color: #090a09; /* Dark color for the header */
     margin-bottom: 10px; /* Space below the header */
   }
   
   .welcome-text {
     font-size: 16px; /* Standard font size for text */
-    color: #7f8c8d; /* Grey color for the text */
+    color: #6c797a; /* Grey color for the text */
     margin-bottom: 20px; /* Space below the text */
   }
   
@@ -32,20 +32,20 @@
     gap: 10px; /* Space between buttons */
   }
   
-  .button {
-    background-color: #3498db; /* Primary button color */
+  .button1 {
+    background-color: #44a34c; /* Primary button color */
     color: white; /* Text color */
     border: none; /* No border */
     padding: 10px 10px; /* Padding inside the button */
     cursor: pointer; /* Pointer cursor on hover */
     border-radius: 5px; /* Rounded corners */
     transition: background-color 0.3s; /* Smooth transition for hover effect */
-    font-size: 16px; /* Font size for button text */
+    font-size: 18px; /* Font size for button text */
     display: flex; /* Flexbox for icon and text */
     align-items: center; /* Center items vertically */
   }
   
-  .button:hover {
+  .button1:hover {
     background-color: #2980b9; /* Darker shade on hover */
   }
   

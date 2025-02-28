@@ -116,7 +116,7 @@ const DoctorProfile = () => {
     <div className="container">
       <Sidebar user={user} />
       <div className="main-content">
-        <h2 className="welcome-header">Welcome,  {user.name || "User "}</h2>
+        <h2 className="welcome-header0">Welcome,  {user.name || "User "}</h2>
         <p className="welcome-text">Manage your profile, view appointments, and update details.</p>
 
         <div>
@@ -139,7 +139,7 @@ const DoctorProfile = () => {
                 <p><strong>Teliphone Number:</strong> {item.contactNumber || "N/A"}</p>
                 {view === "Doctor" && <p><strong>Status:</strong> {item.role || "N/A"}</p>}
                 {view === "Patient" && <p><strong>Status:</strong> {item.role || "N/A"}</p>}
-                <button className="button" onClick={() => deleteUser(item.id)}>Delete</button>
+                <button className="d-button" onClick={() => deleteUser(item.id)}>Delete</button>
               </div>
             ))
           ) : (
