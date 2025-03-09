@@ -1,0 +1,157 @@
+.lpc-Container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .lpc-Container .title {
+    text-align: center;
+    font-size: 2em;
+    color: #4CAF50;
+    margin-bottom: 30px;
+  }
+  
+  .lpc-Container .calculation-section {
+    margin-bottom: 40px;
+  }
+  
+  .lpc-Container .input-card,
+  .lpc-Container .report-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .lpc-Container h3 {
+    color: #333;
+    font-size: 1.6em;
+    margin-bottom: 15px;
+  }
+  
+  .lpc-Container .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .lpc-Container label {
+    font-weight: bold;
+    color: #555;
+    font-size: 1em;
+  }
+  
+  .lpc-Container input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+  }
+  
+  .lpc-Container input:read-only {
+    background-color: #f4f4f4;
+  }
+  
+  .lpc-Container button {
+    width: 30%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 5px;
+    margin-left: 5px;
+  }
+  
+  .lpc-Container .green-btn {
+    background-color: #4CAF50;
+    color: white;
+
+  }
+  
+  .lpc-Container .green-btn:hover {
+    background-color: #45a049;
+  }
+  
+  .lpc-Container .blue-btn {
+    background-color: #008CBA;
+    color: white;
+  }
+  
+  .lpc-Container .blue-btn:hover {
+    background-color: #007bb5;
+  }
+  
+  .lpc-Container .red-btn {
+    background-color: #f44336;
+    color: white;
+    margin-bottom: 15px;
+  }
+  
+  .lpc-Container .red-btn:hover {
+    background-color: #e03e2d;
+  }
+  
+  .lpc-Container .report-detail {
+    font-size: 1.1em;
+    line-height: 1.6;
+  }
+  
+  .lpc-Container .report-title {
+    color: #333;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+  }
+  
+  .lpc-Container .report-section {
+    margin-top: 40px;
+  }
+  
+  .lpc-Container .report-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .lpc-Container button:focus {
+    outline: none;
+  }
+  .lpc-Container {
+  position: relative; /* To position the button within this container */
+}
+
+.lpc-Container .home-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.lpc-Container .home-btn:hover {
+  background-color: #45a049;
+}
+.go-to-calculation-btn
+{
+    background-color: #008CBA;
+    color: white;
+}
+.lpc-Container .print-button
+{
+    background-color: #008CBA;
+    color: white; 
+}
+.lpc-Container .print-button:hover {
+    background-color: #007bb5;
+  }

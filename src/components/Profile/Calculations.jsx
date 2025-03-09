@@ -38,7 +38,7 @@ const Calculation = () => {
           <button className="button1" onClick={() => navigate('/INR')}>
             <FaFileMedical style={{ marginRight: '8px' }} /> INR (International Normalized Ratio)
           </button>
-          <button className="button1" onClick={() => navigate('/lipid-profile')}>
+          <button className="button1" onClick={() => navigate('/LPC')}>
             <FaClipboardList style={{ marginRight: '8px' }} /> Lipid Profile Calculation
           </button>
         </div>

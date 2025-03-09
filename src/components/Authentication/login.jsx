@@ -228,6 +228,17 @@ const Login = () => {
             >
               Forgot Password?
             </Link>
+            <Link
+              to="/"
+              style={{
+                color: "#66a832",
+                textDecoration: "none",
+                fontSize: "14px",
+                fontFamily: "'Poppins', sans-serif",
+              }}
+            >
+              Go Home?
+            </Link>
           </div>
         </form>
       </div>

@@ -109,8 +109,8 @@ const Appointments = () => {
 
         {/* Latest Appointment */}
         <div className="latest-appointment">
-          <h3>Latest Appointment</h3>
-          {latestAppointment.patientName ? (
+          <h3>Latest Appointments</h3>
+          {appointments.length > 0 ? (
             <table>
               <thead>
                 <tr>
@@ -122,17 +122,19 @@ const Appointments = () => {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>{latestAppointment.patientName}</td>
-                  <td>{latestAppointment.testType}</td>
-                  <td>{latestAppointment.date}</td>
-                  <td>{latestAppointment.isConfirmed ? 'Confirmed' : 'Pending'}</td>
-                  <td>
-                    {!latestAppointment.isConfirmed && (
-                      <button onClick={() => handleConfirm(latestAppointment.id)} className="confirm-button">Confirm Booking</button>
-                    )}
-                  </td>
-                </tr>
+                {appointments.map((appointment) => (
+                  <tr key={appointment.id}>
+                    <td>{appointment.patientName}</td>
+                    <td>{appointment.testType}</td>
+                    <td>{appointment.date}</td>
+                    <td>{appointment.isConfirmed ? 'Confirmed' : 'Pending'}</td>
+                    <td>
+                      {!appointment.isConfirmed && (
+                        <button onClick={() => handleConfirm(appointment.id)} className="confirm-button">Confirm Booking</button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           ) : (
@@ -163,7 +165,7 @@ const Appointments = () => {
         <form onSubmit={handleSubmit} className="booking-form">
           <h3>Book a New Appointment</h3>
           <div>
-            <label htmlFor="patientName">Patient Name:</label>
+            <label htmlFor="patientName">Patient Email:</label>
             <input
               type="text"
               id="patientName"
@@ -171,7 +173,7 @@ const Appointments = () => {
               value={formData.patientName}
               onChange={handleChange}
               required
-              placeholder="Enter your name"
+              placeholder="Enter patient email"
             />
           </div>
           <div>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { db } from "../../firebase/db"; // Correct import path for your db instance
-import { collection, query, where, getDocs } from "firebase/firestore"; // Correct imports for Firestore
+import { db } from "../../firebase/db";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import "./Result.css"; // Assuming you'll create a separate CSS file for styling
 
 const Result = () => {
   const [patientEmail, setPatientEmail] = useState("");
@@ -10,10 +11,7 @@ const Result = () => {
 
   const handleSearch = async () => {
     try {
-      // Reference to the "Reports" collection
       const reportsRef = collection(db, "Reports");
-
-      // Create a query to filter based on the user input
       const q = query(
         reportsRef,
         where("patientEmail", "==", patientEmail),
@@ -21,10 +19,7 @@ const Result = () => {
         where("testType", "==", testType)
       );
 
-      // Get the documents that match the query
       const querySnapshot = await getDocs(q);
-
-      // If there are matching reports, display them
       if (!querySnapshot.empty) {
         const filteredResults = querySnapshot.docs.map((doc) => doc.data());
         setResults(filteredResults);
@@ -36,58 +31,66 @@ const Result = () => {
     }
   };
 
-  // Convert Firestore timestamp to a human-readable format
   const formatTimestamp = (timestamp) => {
     if (timestamp && timestamp.seconds) {
-      const date = new Date(timestamp.seconds * 1000); // Convert to milliseconds
-      return date.toLocaleString(); // Or use .toDateString()/.toISOString() as needed
+      const date = new Date(timestamp.seconds * 1000);
+      return date.toLocaleString();
     }
     return "N/A";
   };
 
   return (
-    <div>
-      <div>
+    <div className="result-container">
+      <h2>Search Test Results</h2>
+
+      <div className="form-group">
         <label>Patient Email:</label>
         <input
           type="email"
           value={patientEmail}
           onChange={(e) => setPatientEmail(e.target.value)}
+          className="input-field"
         />
       </div>
-      <div>
+
+      <div className="form-group">
         <label>Book Date:</label>
         <input
           type="date"
           value={bookDate}
           onChange={(e) => setBookDate(e.target.value)}
+          className="input-field"
         />
       </div>
-      <div>
+
+      <div className="form-group">
         <label>Test Type:</label>
         <select
           value={testType}
           onChange={(e) => setTestType(e.target.value)}
+          className="select-field"
         >
           <option value="egfr">EGFR</option>
-          <option value="Blood Urea Nitrogen">Bun</option>
+          <option value="Blood Urea Nitrogen">BUN</option>
           <option value="Insulin Dose Calculator">Insulin Dose Calculator</option>
-          <option value="International Normalized Ratio (INR)">International Normalized Ratio (INR)</option>
-          {/* Add more options if needed */}
+          <option value="International Normalized Ratio (INR)">INR</option>
+          <option value="LPC Test">Lipid Profile Calculation</option>
         </select>
       </div>
-      <button onClick={handleSearch}>Search</button>
 
-      <div>
+      <button className="search-btn" onClick={handleSearch}>
+        Search
+      </button>
+
+      <div className="results-section">
         {results.length > 0 ? (
-          <ul>
+          <ul className="results-list">
             {results.map((report, index) => (
-              <li key={index}>
-                {/* Dynamically render all fields */}
+              <li key={index} className="report-item">
                 {Object.entries(report).map(([key, value]) => (
-                  <p key={key}>
-                    <strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong> 
-                    {key === 'timestamp' ? formatTimestamp(value) : value}
+                  <p key={key} className="report-detail">
+                    <strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong>{" "}
+                    {key === "timestamp" ? formatTimestamp(value) : value}
                   </p>
                 ))}
               </li>
