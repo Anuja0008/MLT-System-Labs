@@ -1,59 +1,52 @@
-// src/components/Profile/Appointments.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Sidebar from './Sidebar'; // Import the Sidebar component
-import { db } from '../../firebase/db'; // Import Firebase
-import { collection, query, orderBy, limit, getDocs, deleteDoc, doc, addDoc, updateDoc } from 'firebase/firestore';
-import './Appointment.css'; // Import CSS for styling
+import Sidebar from './Sidebar';
+import { db } from '../../firebase/db';
+import { collection, query, where, orderBy, limit, getDocs, deleteDoc, doc, addDoc, updateDoc } from 'firebase/firestore';
+import './Appointment.css';
 
 const Appointments = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
   const [appointments, setAppointments] = useState([]);
-  const [latestAppointment, setLatestAppointment] = useState({});
   const [formData, setFormData] = useState({
     patientName: '',
     testType: '',
     date: '',
   });
 
-  // Redirect to login if user is not logged in
   useEffect(() => {
     if (!user) {
       navigate('/login');
     }
   }, [user, navigate]);
 
-  // Fetch appointments from Firestore
   const fetchAppointments = async () => {
     try {
       const bookingsRef = collection(db, 'Bookings');
-      const q = query(bookingsRef, orderBy('timestamp', 'desc'), limit(10)); // Fetch latest 10 appointments
+      const q = query(bookingsRef, orderBy('timestamp', 'desc'), limit(10));
       const querySnapshot = await getDocs(q);
 
-      const appointmentsData = [];
-      querySnapshot.forEach((doc) => {
-        appointmentsData.push({ id: doc.id, ...doc.data() });
-      });
+      const appointmentsData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
       setAppointments(appointmentsData);
-      if (appointmentsData.length > 0) {
-        setLatestAppointment(appointmentsData[0]); // Set the latest appointment
-      }
     } catch (error) {
       console.error('Error fetching appointments:', error);
     }
   };
 
   useEffect(() => {
-    fetchAppointments(); // Call the fetchAppointments function on component mount
+    fetchAppointments();
   }, []);
 
   const handleDelete = async (id) => {
     try {
-      await deleteDoc(doc(db, 'Bookings', id)); // Delete the appointment from Firestore
+      await deleteDoc(doc(db, 'Bookings', id));
       alert('Appointment deleted successfully!');
-      fetchAppointments(); // Re-fetch appointments after deletion
+      fetchAppointments();
     } catch (error) {
       console.error('Error deleting appointment:', error);
       alert('Failed to delete appointment. Try again.');
@@ -62,9 +55,9 @@ const Appointments = () => {
 
   const handleConfirm = async (id) => {
     try {
-      await updateDoc(doc(db, 'Bookings', id), { isConfirmed: true }); // Update the appointment status to confirmed
+      await updateDoc(doc(db, 'Bookings', id), { isConfirmed: true });
       alert('Appointment confirmed successfully!');
-      fetchAppointments(); // Re-fetch appointments after confirmation
+      fetchAppointments();
     } catch (error) {
       console.error('Error confirming appointment:', error);
       alert('Failed to confirm appointment. Try again.');
@@ -78,43 +71,64 @@ const Appointments = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
     try {
-      await addDoc(collection(db, 'Bookings'), {
+      const bookingsRef = collection(db, "Bookings");
+      const historyRef = collection(db, "History"); // Reference to the History collection
+  
+      // Check if a booking already exists for the patient
+      const q = query(bookingsRef, where("patientName", "==", formData.patientName));
+      const querySnapshot = await getDocs(q);
+  
+      if (!querySnapshot.empty) {
+        const existingDoc = querySnapshot.docs[0]; // Assuming one booking per email
+        await deleteDoc(doc(db, "Bookings", existingDoc.id));
+        console.log("Existing appointment deleted.");
+      }
+  
+      // Add new appointment to Bookings
+      const newBooking = {
         patientName: formData.patientName,
         testType: formData.testType,
         date: formData.date,
         timestamp: new Date(),
-        isConfirmed: false, // Default status
+        isConfirmed: false,
+      };
+  
+      const docRef = await addDoc(bookingsRef, newBooking);
+      console.log("Booking added with ID:", docRef.id);
+  
+      // Also add the same booking to the History collection
+      await addDoc(historyRef, {
+        ...newBooking,
+        bookingId: docRef.id, // Store the booking ID for reference
       });
-
-      alert('Booking successful!');
-      setFormData({ patientName: '', testType: '', date: '' });
-      fetchAppointments(); // Re-fetch appointments after booking
+  
+      alert("Booking successful and added to history!");
+      setFormData({ patientName: "", testType: "", date: "" });
+      fetchAppointments(); // Refresh appointments
+  
     } catch (error) {
-      console.error('Error booking appointment:', error);
-      alert('Failed to book appointment. Try again.');
+      console.error("Error booking appointment:", error);
+      alert("Failed to book appointment. Try again.");
     }
   };
-
+  
   return (
     <div style={{ display: "flex", height: "100vh", fontFamily: "Arial, sans-serif" }}>
-      {/* Sidebar */}
       <Sidebar user={user} />
 
-      {/* Main Content */}
       <div style={{ flex: 1, padding: "20px", backgroundColor: "#ecf0f1", overflowY: "auto", maxHeight: "100vh" }}>
         <h2>Appointments</h2>
         <p>View and manage your upcoming appointments.</p>
 
-        {/* Latest Appointment */}
         <div className="latest-appointment">
           <h3>Latest Appointments</h3>
           {appointments.length > 0 ? (
             <table>
               <thead>
                 <tr>
-                  <th>Patient Name</th>
+                  <th>Patient Email</th>
                   <th>Test Type</th>
                   <th>Date</th>
                   <th>Status</th>
@@ -130,8 +144,13 @@ const Appointments = () => {
                     <td>{appointment.isConfirmed ? 'Confirmed' : 'Pending'}</td>
                     <td>
                       {!appointment.isConfirmed && (
-                        <button onClick={() => handleConfirm(appointment.id)} className="confirm-button">Confirm Booking</button>
+                        <button onClick={() => handleConfirm(appointment.id)} className="confirm-button">
+                          Confirm Booking
+                        </button>
                       )}
+                      <button onClick={() => handleDelete(appointment.id)} className="delete-button">
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -142,26 +161,6 @@ const Appointments = () => {
           )}
         </div>
 
-        {/* Appointment History */}
-        <div className="appointment-history">
-          <h3>Appointment History</h3>
-          <ul style={{ listStyle: "none", padding: 0 }}>
-            {appointments.length > 0 ? (
-              appointments.map((appointment) => (
-                <li key={appointment.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span>
-                    📅 {appointment.patientName} - {appointment.testType} ({new Date(appointment.timestamp?.toDate()).toLocaleString()})
-                  </span>
-                  <button onClick={() => handleDelete(appointment.id)} className="delete-button">Delete</button>
-                </li>
-              ))
-            ) : (
-              <li>No upcoming appointments</li>
-            )}
-          </ul>
-        </div>
-
-        {/* Booking Form */}
         <form onSubmit={handleSubmit} className="booking-form">
           <h3>Book a New Appointment</h3>
           <div>
@@ -186,10 +185,11 @@ const Appointments = () => {
               required
             >
               <option value="">Select a test type</option>
-              <option value="Blood Test">Blood Test</option>
-              <option value="X-Ray">X-Ray</option>
-              <option value="MRI">MRI</option>
-              <option value="CT Scan">CT Scan</option>
+              <option value="Blood Urea Nitrogen">Blood Urea Nitrogen (BUN)</option>
+            <option value="Estimated Glomerular Filtration Rate">Estimated Glomerular Filtration Rate (eGFR)</option>
+            <option value="Insulin Dose Calculator">Insulin Dose Calculator</option>
+            <option value="INR (International Normalized Ratio)">INR (International Normalized Ratio)</option>
+            <option value="Lipid Profile">Lipid Profile Calculation</option>
             </select>
           </div>
           <div>

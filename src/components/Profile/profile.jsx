@@ -120,7 +120,7 @@ const DoctorProfile = () => {
         <p className="welcome-text">Manage your profile, view appointments, and update details.</p>
 
         <div>
-          <button className="button" onClick={() => setView("Assistant")} disabled={view === "Assistant"}>View Doctors</button>
+          <button className="button" onClick={() => setView("Assistant")} disabled={view === "Assistant"}>View Assistants</button>
           <button className="button" onClick={() => setView("Patient")} disabled={view === "Patient"}>View Patients</button>
         </div>
 
