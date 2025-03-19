@@ -11,10 +11,11 @@ import BUN from '../src/components/Calculations/bun';
 import EGFR from './components/Calculations/egfr';
 import ForgetPassword from './components/Authentication/forgetpassword';
 import RESULT from './components/Patient/results';
-// import Chatbot from './components/Home1/chatbot';
+import Chatbot from './components/Home1/chatbot';
 import IDC from './components/Calculations/idc';
 import INR from './components/Calculations/inr';
 import LPC from './components/Calculations/LPC';
+import BMI from '../src/components/Home1/BMI';
 
 
 const App = () => {
@@ -35,11 +36,11 @@ const App = () => {
       <Route path="/EGFR" element={<EGFR />} />
       <Route path="/ForgetPassword" element={<ForgetPassword />} />
       <Route path="/RESULT" element={<RESULT />} />
-      {/* <Route path="/Chatbot" element={<Chatbot />} /> */}
+      <Route path="/Chatbot" element={<Chatbot />} />
       <Route path="/IDC" element={<IDC />} />
       <Route path="/INR" element={<INR />} />
       <Route path="/LPC" element={<LPC />} />
-      
+      <Route path="BMI"  element={<BMI/>}/>
 
 
 

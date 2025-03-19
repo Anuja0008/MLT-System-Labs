@@ -5,8 +5,8 @@ import "./testdetails.css";
 
 import contactImage from '../../Photos/bun.jpg';
 import contactImage1 from '../../Photos/egfr.jpg';
-
-
+import Chatbot from '../Home1/chatbot'; 
+import BMI from '../Home1/BMI'; 
 
 function Home1() {
 
@@ -41,11 +41,14 @@ function Home1() {
           <p>Your trusted partner in accurate and reliable diagnostic services.</p>
           <button className="cta-button"  onClick={gotologin}>Book a Test</button>
         </div>
+        
       </section>
 
       {/* Services Section */}
       <section className="services-section">
         <h2>Our Services</h2>
+
+        
         
         <div className="services-grid">
           <div className="service-card">
@@ -159,6 +162,9 @@ function Home1() {
       Urea nitrogen is a waste product created when your liver breaks down protein.
       A BUN test can help diagnose or monitor kidney disease.
     </h4>
+    <Chatbot />
+    <BMI/>
+   
   </div>
 </section>
 
