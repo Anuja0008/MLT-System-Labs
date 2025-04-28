@@ -16,6 +16,11 @@ import IDC from './components/Calculations/idc';
 import INR from './components/Calculations/inr';
 import LPC from './components/Calculations/LPC';
 import BMI from '../src/components/Home1/BMI';
+import About from './components/Headerbar/about';
+import Admin from './components/Admin/admin';
+import ADDASSITANT from './components/Admin/addAssitant';
+import DELETEASSISTANT from './components/Admin/DeleteAssistant';
+
 
 
 const App = () => {
@@ -40,8 +45,15 @@ const App = () => {
       <Route path="/IDC" element={<IDC />} />
       <Route path="/INR" element={<INR />} />
       <Route path="/LPC" element={<LPC />} />
-      <Route path="BMI"  element={<BMI/>}/>
+      <Route path="/BMI"  element={<BMI/>}/>
+      <Route path="/about"  element={<About/>}/>
+      <Route path="/Admin" element={<Admin />} />
+      <Route path="/ADDASSITANT" element={<ADDASSITANT />} />
+      <Route path="/DELETEASSISTANT" element={<DELETEASSISTANT />} />
 
+
+
+     
 
 
 

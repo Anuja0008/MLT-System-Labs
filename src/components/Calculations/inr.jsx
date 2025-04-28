@@ -175,7 +175,7 @@ const INR = () => {
           <button className="print-button" onClick={printReport}>Print Report</button>
           <button onClick={uploadReport} className="btn blue-btn">Upload Report</button>
         </div>
-      )}
+      )} 
     </div>
   );
 };

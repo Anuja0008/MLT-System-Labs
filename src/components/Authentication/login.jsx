@@ -190,7 +190,7 @@ const Login = () => {
               }}
               disabled={loading}
             >
-              <option value="doctor">Doctor</option>
+              {/* <option value="doctor">Doctor</option> */}
               <option value="patient">Patient</option>
               <option value="assistant">Assistant</option>
             </select>

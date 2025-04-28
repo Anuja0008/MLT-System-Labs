@@ -26,9 +26,9 @@ function Home1() {
         <ul className="nav-links">
          
           <li><a href="#home">Home</a></li>
-          <li><a href="#home">About</a></li>
-          <li><a href="/Chatbot">Services</a></li>
-          <li><a href="#home">Login</a></li>
+          <li><a href="/About">About</a></li>
+          {/* <li><a href="/Chatbot">Services</a></li> */}
+          <li><a href="/Admin">Admin</a></li>
 
           
         </ul>
