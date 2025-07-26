@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import { Layout } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { db } from '../../firebase/db';
-import { doc, setDoc } from 'firebase/firestore';
-import Sidebar from './Sidebar'; // Import your Sidebar component
+import { collection, getDocs, query, where, addDoc, doc, updateDoc } from 'firebase/firestore';
+import Sidebar from './Sidebar';
 
-const { Header, Content } = Layout;
-
-function ADDASSISTANT() {
-  const [adminData, setAdminData] = useState({
+const DoctorProfile = () => {
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
+  const [assistants, setAssistants] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [newAssistant, setNewAssistant] = useState({
     name: "",
     email: "",
     gender: "",
@@ -15,25 +17,56 @@ function ADDASSISTANT() {
     contactNumber: "",
     nicOrPassport: "",
     address: "",
-    emergencyContactName: "",
-    password: "",
-    role: "Assistant"
+    password: ""
   });
-  const [collapsed, setCollapsed] = useState(false);
 
-  const handleChange = (e) => {
-    setAdminData({ ...adminData, [e.target.name]: e.target.value });
+  const [editId, setEditId] = useState(null);
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    const fetchAssistants = async () => {
+      try {
+        setLoading(true);
+        const q = query(collection(db, "users"), where("role", "==", "Assistant"));
+        const querySnapshot = await getDocs(q);
+        const assistantList = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setAssistants(assistantList);
+      } catch (error) {
+        console.error("Error fetching assistants:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAssistants();
+  }, []);
+
+  const calculateAge = (dob) => {
+    const birthDate = new Date(dob);
+    const age = new Date().getFullYear() - birthDate.getFullYear();
+    const month = new Date().getMonth() - birthDate.getMonth();
+    return month < 0 || (month === 0 && new Date().getDate() < birthDate.getDate()) ? age - 1 : age;
   };
 
-  const handleRegister = async () => {
+  const addAssistant = async () => {
+    const age = calculateAge(newAssistant.dob);
+    if (age < 18) {
+      alert("Assistant must be at least 18 years old.");
+      return;
+    }
+
     try {
-      const docRef = doc(db, 'users', adminData.email);
-      await setDoc(docRef, {
-        ...adminData,
-        createdAt: new Date()
-      });
-      alert('Assistant registered successfully!');
-      setAdminData({
+      await addDoc(collection(db, "users"), { ...newAssistant, role: "Assistant" });
+      alert("Assistant added successfully");
+      setNewAssistant({
         name: "",
         email: "",
         gender: "",
@@ -41,115 +74,164 @@ function ADDASSISTANT() {
         contactNumber: "",
         nicOrPassport: "",
         address: "",
-        emergencyContactName: "",
         password: ""
       });
+      // Refresh assistants list
+      const q = query(collection(db, "users"), where("role", "==", "Assistant"));
+      const querySnapshot = await getDocs(q);
+      const assistantList = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setAssistants(assistantList);
     } catch (error) {
-      console.error('Error registering assistant:', error);
-      alert('Failed to register assistant');
+      console.error("Error adding assistant: ", error);
     }
   };
 
-  return (
-    <Layout style={{ minHeight: '100vh' }}>
-      {/* Sidebar Component */}
-      <Sidebar collapsed={collapsed} onCollapse={setCollapsed} />
-      
-      <Layout>
-        <Header style={styles.header}>
-          <h1 style={styles.headerTitle}>Register Assistant</h1>
-        </Header>
-        
-        <Content style={styles.content}>
-          <div style={styles.formContainer}>
-            <form style={styles.form} onSubmit={(e) => { e.preventDefault(); handleRegister(); }}>
-              {[
-                { name: 'name', placeholder: 'Full Name' },
-                { name: 'email', placeholder: 'Email', type: 'email' },
-                { name: 'gender', placeholder: 'Gender' },
-                { name: 'dob', placeholder: 'Date of Birth', type: 'date' },
-                { name: 'contactNumber', placeholder: 'Contact Number' },
-                { name: 'nicOrPassport', placeholder: 'NIC or Passport Number' },
-                { name: 'address', placeholder: 'Address' },
-                { name: 'emergencyContactName', placeholder: 'Emergency Contact Name' },
-                { name: 'password', placeholder: 'Password', type: 'password' }
-              ].map((field) => (
-                <input
-                  key={field.name}
-                  type={field.type || "text"}
-                  name={field.name}
-                  value={adminData[field.name]}
-                  placeholder={field.placeholder}
-                  onChange={handleChange}
-                  style={styles.input}
-                  required
-                />
-              ))}
+  // Save edited assistant info
+  const saveAssistant = async (id) => {
+    const assistant = assistants.find(a => a.id === id);
 
-              <button style={styles.button} type="submit">
-                Register Assistant
-              </button>
-            </form>
-          </div>
-        </Content>
-      </Layout>
-    </Layout>
-  );
-}
-
-// Updated styles to work with the layout
-const styles = {
-  header: {
-    background: '#fff',
-    padding: '0 24px',
-    boxShadow: '0 1px 4px rgba(0, 21, 41, 0.08)',
-  },
-  headerTitle: {
-    fontSize: '20px',
-    margin: '16px 0',
-    color: '#333',
-  },
-  content: {
-    margin: '24px 16px',
-    padding: 24,
-    minHeight: 280,
-  },
-  formContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: 'calc(100vh - 112px)',
-  },
-  form: {
-    width: '100%',
-    maxWidth: '500px',
-    padding: '2rem',
-    backgroundColor: '#fff',
-    borderRadius: '10px',
-    boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
-  },
-  input: {
-    width: '100%',
-    padding: '0.75rem',
-    margin: '0.5rem 0',
-    borderRadius: '5px',
-    border: '1px solid #ccc',
-    fontSize: '1rem',
-  },
-  button: {
-    width: '100%',
-    padding: '0.75rem',
-    marginTop: '1rem',
-    backgroundColor: '#007bff',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '5px',
-    fontSize: '1rem',
-    cursor: 'pointer',
-    '&:hover': {
-      backgroundColor: '#0069d9',
+    // Optionally validate age on edit dob field
+    if (assistant.dob) {
+      const age = calculateAge(assistant.dob);
+      if (age < 18) {
+        alert("Assistant must be at least 18 years old.");
+        return;
+      }
     }
-  }
+
+    try {
+      const docRef = doc(db, "users", id);
+      // Update only allowed fields
+      await updateDoc(docRef, {
+        name: assistant.name,
+        email: assistant.email,
+        gender: assistant.gender,
+        dob: assistant.dob,
+        contactNumber: assistant.contactNumber,
+        nicOrPassport: assistant.nicOrPassport,
+        address: assistant.address,
+      });
+      alert("Assistant updated successfully");
+      setEditId(null);
+    } catch (error) {
+      console.error("Error updating assistant:", error);
+      alert("Failed to update assistant");
+    }
+  };
+
+  if (!user) return null;
+
+  return (
+    <div className="container">
+      <Sidebar user={user} />
+      <div className="main-content">
+        <h2 className="welcome-header0">Welcome</h2>
+        <p className="welcome-text">Manage your assistants and update their details.</p>
+
+        <h3>Assistant List</h3>
+        {loading ? (
+          <p>Loading assistants...</p>
+        ) : assistants.length > 0 ? (
+          assistants.map((item) => (
+            <div key={item.id} className="appointment-card">
+              {editId === item.id ? (
+                <>
+                  <input
+                    className="input-field"
+                    type="text"
+                    value={item.name}
+                    onChange={(e) => setAssistants(assistants.map(a => a.id === item.id ? { ...a, name: e.target.value } : a))}
+                    placeholder="Name"
+                  />
+                  <input
+                    className="input-field"
+                    type="email"
+                    value={item.email}
+                    onChange={(e) => setAssistants(assistants.map(a => a.id === item.id ? { ...a, email: e.target.value } : a))}
+                    placeholder="Email"
+                  />
+                  <select
+                    className="input-field"
+                    value={item.gender}
+                    onChange={(e) => setAssistants(assistants.map(a => a.id === item.id ? { ...a, gender: e.target.value } : a))}
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <input
+                    className="input-field"
+                    type="date"
+                    value={item.dob}
+                    onChange={(e) => setAssistants(assistants.map(a => a.id === item.id ? { ...a, dob: e.target.value } : a))}
+                  />
+                  <input
+                    className="input-field"
+                    type="text"
+                    value={item.contactNumber}
+                    onChange={(e) => setAssistants(assistants.map(a => a.id === item.id ? { ...a, contactNumber: e.target.value } : a))}
+                    placeholder="Contact Number"
+                  />
+                  <input
+                    className="input-field"
+                    type="text"
+                    value={item.nicOrPassport}
+                    onChange={(e) => setAssistants(assistants.map(a => a.id === item.id ? { ...a, nicOrPassport: e.target.value } : a))}
+                    placeholder="NIC/Passport Number"
+                  />
+                  <input
+                    className="input-field"
+                    type="text"
+                    value={item.address}
+                    onChange={(e) => setAssistants(assistants.map(a => a.id === item.id ? { ...a, address: e.target.value } : a))}
+                    placeholder="Home Address"
+                  />
+
+                  <button className="button" onClick={() => saveAssistant(item.id)}>Save</button>
+                  <button className="d-button" onClick={() => setEditId(null)}>Cancel</button>
+                </>
+              ) : (
+                <>
+                  <h3>{item.name}</h3>
+                  <p><strong>Email:</strong> {item.email}</p>
+                  <p><strong>Gender:</strong> {item.gender}</p>
+                  <p><strong>NIC/Passport:</strong> {item.nicOrPassport}</p>
+                  <p><strong>Date of Birth:</strong> {item.dob}</p>
+                  <p><strong>Telephone Number:</strong> {item.contactNumber || "N/A"}</p>
+                  <p><strong>Status:</strong> {item.role || "N/A"}</p>
+                  <button className="button" onClick={() => setEditId(item.id)}>Edit</button>
+                </>
+              )}
+            </div>
+          ))
+        ) : (
+          <p>No assistants found.</p>
+        )}
+
+        <h3>Add New Assistant</h3>
+        <div className="add-user-section">
+          <input className="input-field" type="text" placeholder="Name" value={newAssistant.name} onChange={(e) => setNewAssistant({ ...newAssistant, name: e.target.value })} />
+          <input className="input-field" type="email" placeholder="Email" value={newAssistant.email} onChange={(e) => setNewAssistant({ ...newAssistant, email: e.target.value })} />
+          <select className="input-field" value={newAssistant.gender} onChange={(e) => setNewAssistant({ ...newAssistant, gender: e.target.value })}>
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+          <input className="input-field" type="date" placeholder="Date of Birth" value={newAssistant.dob} onChange={(e) => setNewAssistant({ ...newAssistant, dob: e.target.value })} />
+          <input className="input-field" type="text" placeholder="Contact Number" value={newAssistant.contactNumber} onChange={(e) => setNewAssistant({ ...newAssistant, contactNumber: e.target.value })} />
+          <input className="input-field" type="text" placeholder="NIC/Passport Number" value={newAssistant.nicOrPassport} onChange={(e) => setNewAssistant({ ...newAssistant, nicOrPassport: e.target.value })} />
+          <input className="input-field" type="text" placeholder="Home Address" value={newAssistant.address} onChange={(e) => setNewAssistant({ ...newAssistant, address: e.target.value })} />
+          <input className="input-field" type="password" placeholder="Password" value={newAssistant.password} onChange={(e) => setNewAssistant({ ...newAssistant, password: e.target.value })} />
+          <button className="button" onClick={addAssistant}>Add Assistant</button>
+        </div>
+      </div>
+    </div>
+  );
 };
 
-export default ADDASSISTANT;
+export default DoctorProfile;

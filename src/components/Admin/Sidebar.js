@@ -30,10 +30,10 @@ const Sidebar = ({ collapsed, onCollapse }) => {
           </Menu.Item>
         </Menu.SubMenu>
         <Menu.Item key="patients" icon={<TeamOutlined />}>
-          <Link to="/admin/patients">Patients</Link>
+          <Link to="/ViewPatient">Patients</Link>
         </Menu.Item>
         <Menu.Item key="bookings" icon={<CalendarOutlined />}>
-          <Link to="/admin/bookings">Bookings</Link>
+          <Link to="/Bookinginfo">Bookings</Link>
         </Menu.Item>
       </Menu>
     </Sider>

@@ -1,6 +1,6 @@
 export const sidebarStyle = {
     width: "250px",
-    background: " #4eb13b",
+    background: " #14532d",
     color: "white",
     padding: "20px",
     display: "flex",
@@ -36,7 +36,7 @@ export const sidebarStyle = {
   
   export const menuItemStyle = {
     padding: "18px 20px",
-    background: "#a8e3a8",
+    background: "#e0f2f1",
     color: "Black",
     borderRadius: "5px",
     cursor: "pointer",

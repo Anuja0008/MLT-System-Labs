@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../../firebase/db';
 import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
-import { Layout, Table, Button, Popconfirm, message } from 'antd';
+import { Layout, Table, Button, Popconfirm, message, Card } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
-import Sidebar from './Sidebar'; // Import the Sidebar component
+import Sidebar from './Sidebar';
 
 const { Header, Content } = Layout;
 
@@ -48,20 +48,26 @@ function DELETEASSISTANT() {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
+      sorter: (a, b) => a.name.localeCompare(b.name),
+      render: (text) => <strong>{text}</strong>,
     },
     {
       title: 'Email',
       dataIndex: 'email',
       key: 'email',
+      responsive: ['md'],
     },
     {
       title: 'Contact',
       dataIndex: 'contactNumber',
       key: 'contact',
+      responsive: ['sm'],
+      render: (text) => text || 'N/A',
     },
     {
       title: 'Action',
       key: 'action',
+      align: 'center',
       render: (_, record) => (
         <Popconfirm
           title="Are you sure to delete this assistant?"
@@ -69,10 +75,15 @@ function DELETEASSISTANT() {
           okText="Yes"
           cancelText="No"
         >
-          <Button 
-            danger 
-            icon={<DeleteOutlined />} 
-            type="text"
+          <Button
+            danger
+            icon={<DeleteOutlined />}
+            type="primary"
+            shape="circle"
+            size="middle"
+            style={{ transition: 'transform 0.2s' }}
+            onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
+            onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
           />
         </Popconfirm>
       ),
@@ -81,28 +92,40 @@ function DELETEASSISTANT() {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      {/* Use the imported Sidebar component */}
-      <Sidebar 
-        collapsed={collapsed} 
-        onCollapse={setCollapsed} 
+      <Sidebar
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
+        style={{ backgroundColor: '#001529' }}
       />
-      
       <Layout>
         <Header style={styles.header}>
           <h1 style={styles.headerTitle}>Manage Assistants</h1>
         </Header>
         <Content style={styles.content}>
-          <div style={styles.tableContainer}>
-            <Table 
-              dataSource={assistants} 
-              columns={columns} 
+          <Card
+            bordered={false}
+            style={{ borderRadius: 12, boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}
+          >
+            <Table
+              dataSource={assistants}
+              columns={columns}
               loading={loading}
               rowKey="id"
+              pagination={{ pageSize: 6 }}
+              scroll={{ x: 'max-content' }}
               style={styles.table}
+              rowClassName={() => 'assistant-row'}
             />
-          </div>
+          </Card>
         </Content>
       </Layout>
+
+      <style jsx="true">{`
+        .assistant-row:hover {
+          background-color: #f0f7ff !important;
+          cursor: pointer;
+        }
+      `}</style>
     </Layout>
   );
 }
@@ -111,27 +134,27 @@ const styles = {
   header: {
     background: '#fff',
     padding: '0 24px',
-    boxShadow: '0 1px 4px rgba(0, 21, 41, 0.08)',
+    boxShadow: '0 1px 6px rgba(0, 0, 0, 0.1)',
+    display: 'flex',
+    alignItems: 'center',
+    height: 64,
   },
   headerTitle: {
-    fontSize: '20px',
-    margin: '16px 0',
-    color: '#333',
+    fontSize: '28px',
+    margin: 0,
+    color: '#1890ff',
+    fontWeight: 'bold',
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
   },
   content: {
     margin: '24px 16px',
     padding: 24,
     minHeight: 280,
-  },
-  tableContainer: {
-    backgroundColor: '#fff',
-    padding: '24px',
-    borderRadius: '8px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+    backgroundColor: '#f5f7fa',
   },
   table: {
     width: '100%',
-  }
+  },
 };
 
 export default DELETEASSISTANT;

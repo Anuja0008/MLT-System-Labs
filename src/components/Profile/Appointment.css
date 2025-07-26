@@ -1,97 +1,184 @@
-/* Appointments.css */
+/* Wrapper to center content */
+.appointment-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
 
+/* ✅ Latest Appointments Section */
 .latest-appointment {
-    background-color: #ffffff;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .latest-appointment table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .latest-appointment th, .latest-appointment td {
-    border: 1px solid #bdc3c7;
-    padding: 10px;
-    text-align: left;
-  }
-  
-  .latest-appointment th {
-    background-color: #4da140;
-    color: white;
-  }
-  
-  .appointment-history {
-    margin-bottom: 20px;
-  }
-  
-  .booking-form {
-    background-color: #ffffff;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .booking-form div {
-    margin-bottom: 15px;
-  }
-  
-  .booking-form label {
-    display: block;
-    margin-bottom: 5px;
-  }
-  
-  .booking-form input[type="text"],
-  .booking-form input[type="date"],
-  .booking-form select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #bdc3c7;
-    border-radius: 5px;
-  }
-  
-  .booking-form button {
-    padding: 10px 15px;
-    background-color: #4da140;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .booking-form button:hover {
-    background-color: #1a6a9a;
-  }
+  background-color: #ffffff;
+  border-radius: 8px;
+  color: #000000;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
 
+.latest-appointment h3 {
+  margin-bottom: 16px;
+  color: #14532d; /* Deep Forest Green */
+  font-size: 20px;
+}
 
+.latest-appointment table {
+  width: 100%;
+  border-collapse: collapse;
+}
 
+.latest-appointment th,
+.latest-appointment td {
+  border: 1px solid #cfd8dc;
+  padding: 12px;
+  text-align: left;
+  font-size: 14px;
+}
 
+.latest-appointment th {
+  background-color: #14532d; /* Bright Healthcare Green */
+  color: white;
+}
 
-/* Styles for the delete button */
+/* ✅ Booking Form */
+.booking-form {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  margin-top: 24px;
+}
+
+.booking-form h3 {
+  color: #14532d;
+  margin-bottom: 20px;
+}
+
+.booking-form div {
+  margin-bottom: 16px;
+}
+
+.booking-form label {
+  display: block;
+  margin-bottom: 6px;
+  color: #14532d;
+}
+
+.booking-form input[type="text"],
+.booking-form input[type="date"],
+.booking-form select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #bdc3c7;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #f9fdf9;
+}
+
+.booking-form input:focus,
+.booking-form select:focus {
+  outline: none;
+  border-color: #14532d;
+  background-color: #ffffff;
+}
+
+.booking-form button {
+  padding: 10px 20px;
+  background-color: #14532d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.booking-form button:hover {
+  background-color: #2e7d32;
+}
+
+/* ✅ Delete Button */
 .delete-button {
-  margin-left: 50px;
-  margin-bottom: 5px;
-  padding: 5px 10px;
-  background-color: #e74c3c; /* Red background */
+  margin-left: 10px;
+  padding: 6px 12px;
+  background-color: #e74c3c;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
 }
 
 .delete-button:hover {
-  background-color: #c0392b; /* Darker red on hover */
+  background-color: #c0392b;
 }
-/* Appointments.css */
-/* Appointments.css */
 
-.latest-appointment {
-    background-color: #ffffff;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1)
+/* ✅ Confirm Button */
+.confirm-button {
+  padding: 6px 12px;
+  background-color: #14532d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-right: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.confirm-button:hover {
+  background-color: #0e3e20;
+}
+
+/* ✅ Responsive Fixes */
+@media screen and (max-width: 768px) {
+  .appointment-container {
+    padding: 10px;
+  }
+
+  .latest-appointment,
+  .booking-form {
+    padding: 16px;
+  }
+
+  .latest-appointment table,
+  .latest-appointment thead,
+  .latest-appointment tbody,
+  .latest-appointment th,
+  .latest-appointment td,
+  .latest-appointment tr {
+    display: block;
+  }
+
+  .latest-appointment tr {
+    margin-bottom: 12px;
+  }
+
+  .latest-appointment td {
+    position: relative;
+    padding-left: 50%;
+  }
+
+  .latest-appointment td::before {
+    position: absolute;
+    left: 10px;
+    top: 12px;
+    white-space: nowrap;
+    font-weight: bold;
+  }
+
+  .latest-appointment td:nth-of-type(1)::before { content: "Patient Email"; }
+  .latest-appointment td:nth-of-type(2)::before { content: "Test Type"; }
+  .latest-appointment td:nth-of-type(3)::before { content: "Date"; }
+  .latest-appointment td:nth-of-type(4)::before { content: "Status"; }
+  .latest-appointment td:nth-of-type(5)::before { content: "Action"; }
+}
+
+.booking-form input[type="email"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #bdc3c7;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #f9fdf9;
 }

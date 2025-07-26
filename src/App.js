@@ -20,6 +20,10 @@ import About from './components/Headerbar/about';
 import Admin from './components/Admin/admin';
 import ADDASSITANT from './components/Admin/addAssitant';
 import DELETEASSISTANT from './components/Admin/DeleteAssistant';
+import ViewPatient from './components/Admin/ViewPatients';
+import Bookinginfo from './components/Admin/Bookinginfo';
+import Resetpassword from './components/Admin/Resetpassword';
+
 
 
 
@@ -50,6 +54,12 @@ const App = () => {
       <Route path="/Admin" element={<Admin />} />
       <Route path="/ADDASSITANT" element={<ADDASSITANT />} />
       <Route path="/DELETEASSISTANT" element={<DELETEASSISTANT />} />
+      <Route path="/ViewPatient" element={<ViewPatient/>}/>
+      <Route path='/Bookinginfo' element={<Bookinginfo/>}/>
+      <Route path='/Resetpassword' element={<Resetpassword/>}/>
+      
+      
+      
 
 
 

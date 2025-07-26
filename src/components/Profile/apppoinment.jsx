@@ -2,7 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { db } from '../../firebase/db';
-import { collection, query, where, orderBy, limit, getDocs, deleteDoc, doc, addDoc, updateDoc } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  limit,
+  getDocs,
+  deleteDoc,
+  doc,
+  addDoc,
+  updateDoc
+} from 'firebase/firestore';
 import './Appointment.css';
 
 const Appointments = () => {
@@ -10,9 +21,10 @@ const Appointments = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const [appointments, setAppointments] = useState([]);
   const [formData, setFormData] = useState({
-    patientName: '',
+    patientEmail: '',
+    patientFullName: '',
     testType: '',
-    date: '',
+    date: ''
   });
 
   useEffect(() => {
@@ -71,49 +83,51 @@ const Appointments = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
-      const bookingsRef = collection(db, "Bookings");
-      const historyRef = collection(db, "History"); // Reference to the History collection
-  
-      // Check if a booking already exists for the patient
-      const q = query(bookingsRef, where("patientName", "==", formData.patientName));
-      const querySnapshot = await getDocs(q);
-  
-      if (!querySnapshot.empty) {
-        const existingDoc = querySnapshot.docs[0]; // Assuming one booking per email
-        await deleteDoc(doc(db, "Bookings", existingDoc.id));
-        console.log("Existing appointment deleted.");
+      const bookingsRef = collection(db, 'Bookings');
+      const historyRef = collection(db, 'History');
+
+      // Remove existing booking if exists
+      const existingQ = query(bookingsRef, where('patientEmail', '==', formData.patientEmail));
+      const existingSnapshot = await getDocs(existingQ);
+
+      if (!existingSnapshot.empty) {
+        const existingDoc = existingSnapshot.docs[0];
+        await deleteDoc(doc(db, 'Bookings', existingDoc.id));
+        console.log('Existing appointment deleted.');
       }
-  
-      // Add new appointment to Bookings
+
+      // Use manually entered full name
+      const fullName = formData.patientFullName;
+
       const newBooking = {
-        patientName: formData.patientName,
+        patientName: formData.patientEmail,
+        patientFullName: fullName,
         testType: formData.testType,
         date: formData.date,
         timestamp: new Date(),
-        isConfirmed: false,
+        isConfirmed: false
       };
-  
+
       const docRef = await addDoc(bookingsRef, newBooking);
-      console.log("Booking added with ID:", docRef.id);
-  
-      // Also add the same booking to the History collection
-      await addDoc(historyRef, {
-        ...newBooking,
-        bookingId: docRef.id, // Store the booking ID for reference
+      await addDoc(historyRef, { ...newBooking, bookingId: docRef.id });
+
+      alert('Booking successful!');
+      setFormData({
+        patientEmail: '',
+        patientFullName: '',
+        testType: '',
+        date: ''
       });
-  
-      alert("Booking successful and added to history!");
-      setFormData({ patientName: "", testType: "", date: "" });
-      fetchAppointments(); // Refresh appointments
-  
+      fetchAppointments();
+
     } catch (error) {
-      console.error("Error booking appointment:", error);
-      alert("Failed to book appointment. Try again.");
+      console.error('Error booking appointment:', error);
+      alert('Failed to book appointment. Try again.');
     }
   };
-  
+
   return (
     <div style={{ display: "flex", height: "100vh", fontFamily: "Arial, sans-serif" }}>
       <Sidebar user={user} />
@@ -128,6 +142,7 @@ const Appointments = () => {
             <table>
               <thead>
                 <tr>
+                  <th>Patient Name</th>
                   <th>Patient Email</th>
                   <th>Test Type</th>
                   <th>Date</th>
@@ -138,6 +153,7 @@ const Appointments = () => {
               <tbody>
                 {appointments.map((appointment) => (
                   <tr key={appointment.id}>
+                    <td>{appointment.patientFullName || 'N/A'}</td>
                     <td>{appointment.patientName}</td>
                     <td>{appointment.testType}</td>
                     <td>{appointment.date}</td>
@@ -145,7 +161,7 @@ const Appointments = () => {
                     <td>
                       {!appointment.isConfirmed && (
                         <button onClick={() => handleConfirm(appointment.id)} className="confirm-button">
-                          Confirm Booking
+                          Confirm
                         </button>
                       )}
                       <button onClick={() => handleDelete(appointment.id)} className="delete-button">
@@ -164,12 +180,24 @@ const Appointments = () => {
         <form onSubmit={handleSubmit} className="booking-form">
           <h3>Book a New Appointment</h3>
           <div>
-            <label htmlFor="patientName">Patient Email:</label>
+            <label htmlFor="patientFullName">Patient Full Name:</label>
             <input
               type="text"
-              id="patientName"
-              name="patientName"
-              value={formData.patientName}
+              id="patientFullName"
+              name="patientFullName"
+              value={formData.patientFullName}
+              onChange={handleChange}
+              required
+              placeholder="Enter patient's full name"
+            />
+          </div>
+          <div>
+            <label htmlFor="patientEmail">Patient Email:</label>
+            <input
+              type="email"
+              id="patientEmail"
+              name="patientEmail"
+              value={formData.patientEmail}
               onChange={handleChange}
               required
               placeholder="Enter patient email"
@@ -186,10 +214,10 @@ const Appointments = () => {
             >
               <option value="">Select a test type</option>
               <option value="Blood Urea Nitrogen">Blood Urea Nitrogen (BUN)</option>
-            <option value="Estimated Glomerular Filtration Rate">Estimated Glomerular Filtration Rate (eGFR)</option>
-            <option value="Insulin Dose Calculator">Insulin Dose Calculator</option>
-            <option value="INR (International Normalized Ratio)">INR (International Normalized Ratio)</option>
-            <option value="Lipid Profile">Lipid Profile Calculation</option>
+              <option value="Estimated Glomerular Filtration Rate">Estimated Glomerular Filtration Rate (eGFR)</option>
+              <option value="Insulin Dose Calculator">Insulin Dose Calculator</option>
+              <option value="INR (International Normalized Ratio)">INR (International Normalized Ratio)</option>
+              <option value="Lipid Profile">Lipid Profile Calculation</option>
             </select>
           </div>
           <div>
