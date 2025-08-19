@@ -18,11 +18,12 @@ import LPC from './components/Calculations/LPC';
 import BMI from '../src/components/Home1/BMI';
 import About from './components/Headerbar/about';
 import Admin from './components/Admin/admin';
-import ADDASSITANT from './components/Admin/addAssitant';
+import ADDASSISTANT from './components/Admin/AddAssistant';
 import DELETEASSISTANT from './components/Admin/DeleteAssistant';
 import ViewPatient from './components/Admin/ViewPatients';
 import Bookinginfo from './components/Admin/Bookinginfo';
 import Resetpassword from './components/Admin/Resetpassword';
+import Login2 from './components/Admin/Login2';
 
 
 
@@ -34,8 +35,7 @@ const App = () => {
 
      <Route path="/" element={<Home1/>}/>
 
-      <Route path="/Login" element={<Login />} />
-      
+      <Route path="/login" element={<Login />} />
       <Route path="/Doctorprofile" element={<DoctorProfile />} />
       <Route path="/Patientprofile" element={<Patientprofile />} />
       <Route path="/Appointments" element={<Appointments />} />
@@ -51,14 +51,15 @@ const App = () => {
       <Route path="/LPC" element={<LPC />} />
       <Route path="/BMI"  element={<BMI/>}/>
       <Route path="/about"  element={<About/>}/>
-      <Route path="/Admin" element={<Admin />} />
-      <Route path="/ADDASSITANT" element={<ADDASSITANT />} />
-      <Route path="/DELETEASSISTANT" element={<DELETEASSISTANT />} />
+      <Route path="/admin" element={<Admin />} />
+      <Route path="/AddAssistant" element={<ADDASSISTANT />} />
+      <Route path="/DeleteAssistant" element={<DELETEASSISTANT />} />
       <Route path="/ViewPatient" element={<ViewPatient/>}/>
       <Route path='/Bookinginfo' element={<Bookinginfo/>}/>
       <Route path='/Resetpassword' element={<Resetpassword/>}/>
+      <Route path='/Login2' element={<Login2/>}/>
       
-      
+    
       
 
 

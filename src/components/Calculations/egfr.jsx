@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../../firebase/db"; // Firebase config
 import { collection, query, where, getDocs, setDoc, doc } from "firebase/firestore";
-import './egfr.css' // Import the external CSS
+import './egfr.css'; // Import the external CSS
 import { useNavigate } from "react-router-dom";
 
 const EGFR = () => {
@@ -14,56 +14,55 @@ const EGFR = () => {
   const [egfr, setEgfr] = useState(null);
   const [interpretation, setInterpretation] = useState("");
 
-  useEffect(() => {
-    if (patientEmail && patientEmail.includes("@")) {
-      fetchPatientDetails(patientEmail);
-      fetchBookingDate(patientEmail);
-    }
-  }, [patientEmail]);
-
-  // Fetch patient details using email
-  const fetchPatientDetails = async (email) => {
-    try {
-      const usersRef = collection(db, "users");
-      const q = query(usersRef, where("email", "==", email.trim()));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        const userData = querySnapshot.docs[0].data();
-        setPatientName(userData.name || "");
-        setGender(userData.gender || "");
-        if (userData.dob) {
-          setAge(calculateAge(userData.dob));
-        }
-      } else {
-        setPatientName("");
-        setGender("");
-        setAge("");
-      }
-    } catch (error) {
-      console.error("Error fetching patient details:", error);
-    }
-  };
-
-  // Fetch booking date using email
-  const fetchBookingDate = async (email) => {
-    try {
-      const bookingsRef = collection(db, "Bookings");
-      const q = query(bookingsRef, where("patientName", "==", email));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        const booking = querySnapshot.docs[0].data();
-        setBookDate(booking.date || "");
-      } else {
-        setBookDate("");
-      }
-    } catch (error) {
-      console.error("Error fetching booking date:", error);
-    }
-  };
-
   const navigate = useNavigate();
+
+  // Fetch patient details and booking date whenever patientEmail changes
+  useEffect(() => {
+    if (!patientEmail || !patientEmail.includes("@")) return;
+
+    const fetchPatientDetails = async (email) => {
+      try {
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("email", "==", email.trim()));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          const userData = querySnapshot.docs[0].data();
+          setPatientName(userData.name || "");
+          setGender(userData.gender || "");
+          if (userData.dob) {
+            setAge(calculateAge(userData.dob));
+          }
+        } else {
+          setPatientName("");
+          setGender("");
+          setAge("");
+        }
+      } catch (error) {
+        console.error("Error fetching patient details:", error);
+      }
+    };
+
+    const fetchBookingDate = async (email) => {
+      try {
+        const bookingsRef = collection(db, "Bookings");
+        const q = query(bookingsRef, where("patientName", "==", email));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          const booking = querySnapshot.docs[0].data();
+          setBookDate(booking.date || "");
+        } else {
+          setBookDate("");
+        }
+      } catch (error) {
+        console.error("Error fetching booking date:", error);
+      }
+    };
+
+    fetchPatientDetails(patientEmail);
+    fetchBookingDate(patientEmail);
+  }, [patientEmail]);
 
   // Calculate age from DOB
   const calculateAge = (dob) => {
@@ -113,29 +112,24 @@ const EGFR = () => {
   };
 
   // Print the report
-  const printReport = () => {
-    window.print();
-  };
+  const printReport = () => window.print();
 
   // Generate a random 5-digit number
-  const generateRandomSuffix = () => {
-    return Math.floor(10000 + Math.random() * 90000); // Random number between 10000 - 99999
-  };
+  const generateRandomSuffix = () => Math.floor(10000 + Math.random() * 90000);
 
-  // Upload report to Firestore (creates a new doc ID every time)
+  // Upload report to Firestore
   const handleUpload = async () => {
     if (!egfr) {
       alert("Generate the report first before uploading.");
       return;
     }
 
-    // ✅ Generate a unique document ID using email + random suffix
     const randomSuffix = generateRandomSuffix();
     const reportId = `${patientEmail}_${randomSuffix}`;
 
     const reportData = {
-      patientName: patientName,
-      patientEmail: patientEmail,
+      patientName,
+      patientEmail,
       bookDate,
       age,
       gender,
@@ -157,21 +151,31 @@ const EGFR = () => {
 
   return (
     <div className="egfr-container">
-    <h2 className="title">EGFR Report Generator</h2>
-    <h3>Input Patient E-mail & Other Field Filled Automatically</h3>
+      <h2 className="title">EGFR Report Generator</h2>
+      <h3>Input Patient E-mail & Other Fields Filled Automatically</h3>
 
-      <input className="egfr-input" type="email" placeholder="Patient Email" value={patientEmail} onChange={(e) => setPatientEmail(e.target.value)} />
+      <input
+        className="egfr-input"
+        type="email"
+        placeholder="Patient Email"
+        value={patientEmail}
+        onChange={(e) => setPatientEmail(e.target.value)}
+      />
       <input className="egfr-input" type="text" placeholder="Patient Name" value={patientName} readOnly />
       <input className="egfr-input" type="date" value={bookDate} readOnly />
       <input className="egfr-input" type="number" placeholder="Age" value={age} readOnly />
       <input className="egfr-input" type="text" placeholder="Gender" value={gender} readOnly />
-      <input className="egfr-input" type="number" placeholder="Creatinine Level (mg/dL)" value={creatinine} onChange={(e) => setCreatinine(e.target.value)} />
+      <input
+        className="egfr-input"
+        type="number"
+        placeholder="Creatinine Level (mg/dL)"
+        value={creatinine}
+        onChange={(e) => setCreatinine(e.target.value)}
+      />
 
       <button className="report-button" onClick={calculateEGFR}>Generate Report</button>
       <button className="clear-button" onClick={clearFields}>Clear Fields</button>
       <button className="go-to-calculation-btn" onClick={() => navigate("/Calculation")}>Go to Calculation</button>
-      
-
 
       {egfr && (
         <div className="egfr-report-container">

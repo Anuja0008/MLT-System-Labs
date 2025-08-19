@@ -28,7 +28,7 @@ function Home1() {
           <li><a href="#home">Home</a></li>
           <li><a href="/About">About</a></li>
           {/* <li><a href="/Chatbot">Services</a></li> */}
-          <li><a href="/Admin">Admin</a></li>
+          <li><a href="/Login2">Admin</a></li>
 
           
         </ul>

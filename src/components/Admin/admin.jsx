@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Layout, Menu, Card, Button } from 'antd';
+import React from 'react';
+import { Layout, Menu, Card, Button, Row, Col, Statistic, Space, Typography, theme } from 'antd';
 import {
   UserAddOutlined,
   UserDeleteOutlined,
@@ -7,225 +7,168 @@ import {
   CalendarOutlined,
   DashboardOutlined,
   ReloadOutlined,
+  UserOutlined,
+  MedicineBoxOutlined,
+  ScheduleOutlined,
+  LogoutOutlined
 } from '@ant-design/icons';
-import { Link, Routes, Route, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db } from '../../firebase/db'; // Adjust path as needed
+import { db } from '../../firebase/db';
 
 const { Header, Content, Sider } = Layout;
+const { Title } = Typography;
 
-const Admin = () => {
-  const navigate = useNavigate();
+// Live Clock Component
+const LiveClock = () => {
+  const [currentTime, setCurrentTime] = React.useState(new Date());
+
+  React.useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
-    <Layout style={{ minHeight: '100vh', position: 'relative' }}>
-      <Sider collapsible>
-        <div className="logo" style={styles.logo}>Admin Panel</div>
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={['dashboard']}>
-          <Menu.Item key="dashboard" icon={<DashboardOutlined />}>
-            <Link to="/admin">Dashboard</Link>
-          </Menu.Item>
-          <Menu.SubMenu key="assistants" icon={<TeamOutlined />} title="Assistants">
-            <Menu.Item key="add-assistant" icon={<UserAddOutlined />}>
-              <Link to="/ADDASSITANT">Add Assistant</Link>
-            </Menu.Item>
-            <Menu.Item key="manage-assistants" icon={<UserDeleteOutlined />}>
-              <Link to="/DELETEASSISTANT">Delete Assistants</Link>
-            </Menu.Item>
-          </Menu.SubMenu>
-          <Menu.Item key="patients" icon={<TeamOutlined />}>
-            <Link to="/ViewPatient">Patients</Link>
-          </Menu.Item>
-          <Menu.Item key="bookings" icon={<CalendarOutlined />}>
-            <Link to="/Bookinginfo">Bookings</Link>
-          </Menu.Item>
-        </Menu>
-      </Sider>
-
-      <Layout>
-        <Header style={styles.header}>
-          <h1 style={styles.headerTitle}>Admin Dashboard</h1>
-          <Button
-            type="primary"
-            icon={<ReloadOutlined />}
-            style={styles.resetButton}
-            onClick={() => navigate('/Resetpassword')}
-          >
-            Reset Password
-          </Button>
-        </Header>
-
-        <Content style={styles.content}>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/add-assistant" element={<AddAssistant />} />
-            <Route path="/manage-assistants" element={<ManageAssistants />} />
-            <Route path="/patients" element={<Patients />} />
-            <Route path="/bookings" element={<Bookings />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-          </Routes>
-        </Content>
-      </Layout>
-    </Layout>
+    <Space>
+      <CalendarOutlined style={{ color: 'rgba(0, 0, 0, 0.45)' }} />
+      <span style={{ fontSize: "0.9rem", color: "#fff", fontWeight: "bold" }}>
+        {currentTime.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+      </span>
+      <span style={{ fontWeight: "bold", fontSize: "1rem", color: "#fff" }}>
+        {currentTime.toLocaleTimeString()}
+      </span>
+    </Space>
   );
 };
 
-// Reset Password Page Component
-const ResetPassword = () => {
-  return (
-    <Card title="Reset Password" style={styles.card}>
-      <p>This is where your Reset Password form will go.</p>
-      <Link to="/admin">
-        <Button>Back to Dashboard</Button>
-      </Link>
-    </Card>
-  );
-};
+// Dashboard Statistics
+const Dashboard = ({ onResetPassword, onNavigate }) => {
+  const [counts, setCounts] = React.useState({ patients: 0, assistants: 0, bookings: 0, active: 0 });
+  const [loading, setLoading] = React.useState(true);
 
-// Dashboard Component with Firestore Counts
-const Dashboard = () => {
-  const [counts, setCounts] = useState({
-    patients: 0,
-    assistants: 0,
-    bookings: 0,
-  });
-
-  useEffect(() => {
+  React.useEffect(() => {
     const fetchCounts = async () => {
       try {
+        setLoading(true);
         const patientsQuery = query(collection(db, 'users'), where('role', '==', 'Patient'));
         const assistantsQuery = query(collection(db, 'users'), where('role', '==', 'Assistant'));
         const bookingsQuery = collection(db, 'Bookings');
+        const activeQuery = query(collection(db, 'Bookings'), where('status', '==', 'active'));
 
-        const [patientsSnap, assistantsSnap, bookingsSnap] = await Promise.all([
+        const [patientsSnap, assistantsSnap, bookingsSnap, activeSnap] = await Promise.all([
           getDocs(patientsQuery),
           getDocs(assistantsQuery),
           getDocs(bookingsQuery),
+          getDocs(activeQuery)
         ]);
 
         setCounts({
           patients: patientsSnap.size,
           assistants: assistantsSnap.size,
           bookings: bookingsSnap.size,
+          active: activeSnap.size
         });
       } catch (err) {
-        console.error("Error fetching dashboard stats:", err);
+        console.error('Error fetching dashboard stats:', err);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchCounts();
   }, []);
 
+  const statCards = [
+    { title: 'Total Patients', value: counts.patients, icon: <UserOutlined />, gradient: 'linear-gradient(135deg, #6398cb 0%, #096dd9 100%)' },
+    { title: 'Total Assistants', value: counts.assistants, icon: <TeamOutlined />, gradient: 'linear-gradient(135deg, #518b97 0%, #179ba4 100%)' },
+    { title: 'Total Bookings', value: counts.bookings, icon: <CalendarOutlined />, gradient: 'linear-gradient(135deg, #8c64c5 0%, #5221a0 100%)' },
+    { title: 'Active Bookings', value: counts.active, icon: <ScheduleOutlined />, gradient: 'linear-gradient(135deg, #f7c664 0%, #d48806 100%)' }
+  ];
+
   return (
-    <Card title="Dashboard Summary" style={styles.card}>
-      <div style={styles.statsContainer}>
-        <Card type="inner" title="Total Patients" style={styles.statBox}>
-          <h2>{counts.patients}</h2>
-        </Card>
-        <Card type="inner" title="Total Assistants" style={styles.statBox}>
-          <h2>{counts.assistants}</h2>
-        </Card>
-        <Card type="inner" title="Total Bookings" style={styles.statBox}>
-          <h2>{counts.bookings}</h2>
-        </Card>
+    <>
+      <Title level={4}>Overview</Title>
+      <Row gutter={[24, 24]} style={{ marginBottom: 24 }}>
+        {statCards.map((card, i) => (
+          <Col xs={24} sm={12} lg={6} key={i}>
+            <Card bordered={false} hoverable style={{ background: card.gradient, borderRadius: '12px' }}>
+              <Statistic
+                title={card.title}
+                value={card.value}
+                prefix={card.icon}
+                loading={loading}
+                valueStyle={{ color: '#fff' }}
+              />
+            </Card>
+          </Col>
+        ))}
+      </Row>
+
+      <div style={{ marginBottom: 24, textAlign: 'right' }}>
+        <Button
+          type="primary"
+          icon={<ReloadOutlined />}
+          style={{ background: "#e000009e", borderColor: "#53d726" }}
+          onClick={onResetPassword}
+        >
+          Reset Password
+        </Button>
       </div>
-    </Card>
+
+      <Card title="Quick Actions">
+        <Space size="middle" wrap>
+          <Button icon={<UserAddOutlined />} size="large" onClick={() => onNavigate("/ADDASSISTANT")}>Add Assistant</Button>
+          <Button icon={<UserDeleteOutlined />} size="large" onClick={() => onNavigate("/DELETEASSISTANT")}>Manage Assistants</Button>
+          <Button icon={<UserOutlined />} size="large" onClick={() => onNavigate("/ViewPatient")}>View Patients</Button>
+          <Button icon={<ScheduleOutlined />} size="large" onClick={() => onNavigate("/Bookinginfo")}>View Bookings</Button>
+        </Space>
+      </Card>
+    </>
   );
 };
 
-// Other UI Pages (Dummy)
-const AddAssistant = () => (
-  <Card title="Add Assistant" style={styles.card}>
-    <Link to="/admin">
-      <Button>Back to Dashboard</Button>
-    </Link>
-  </Card>
-);
+// Main Admin Layout
+const Admin = () => {
+  const {
+    token: { colorBgContainer, borderRadiusLG }
+  } = theme.useToken();
 
-const ManageAssistants = () => (
-  <Card title="Manage Assistants" style={styles.card}>
-    <Link to="/admin/add-assistant">
-      <Button type="primary" icon={<UserAddOutlined />} style={styles.button}>
-        Add New Assistant
-      </Button>
-    </Link>
-    <Link to="/admin">
-      <Button style={{ marginLeft: 10 }}>Back to Dashboard</Button>
-    </Link>
-  </Card>
-);
+  const navigate = useNavigate();
 
-const Patients = () => (
-  <Card title="Patients" style={styles.card}>
-    <Link to="/admin">
-      <Button>Back to Dashboard</Button>
-    </Link>
-  </Card>
-);
+  return (
+    <Layout style={{ minHeight: '100vh' }}>
+      <Sider width={250} breakpoint="lg" collapsedWidth="0" style={{ background: '#181c2e' }}>
+        <div style={{ height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+          <MedicineBoxOutlined style={{ marginRight: 10 }} /> Ariana Labs
+        </div>
+        <Menu theme="dark" mode="inline" defaultSelectedKeys={['dashboard']} style={{ background: 'transparent' }}>
+          <Menu.Item key="dashboard" icon={<DashboardOutlined />} onClick={() => navigate('/Admin')}>Dashboard</Menu.Item>
+          <Menu.SubMenu key="assistants" icon={<TeamOutlined />} title="Assistants">
+            <Menu.Item key="add-assistant" icon={<UserAddOutlined />} onClick={() => navigate('/ADDASSISTANT')}>Add Assistant</Menu.Item>
+            <Menu.Item key="manage-assistants" icon={<UserDeleteOutlined />} onClick={() => navigate('/DELETEASSISTANT')}>Delete Assistants</Menu.Item>
+          </Menu.SubMenu>
+          <Menu.Item key="patients" icon={<UserOutlined />} onClick={() => navigate('/ViewPatient')}>Patients</Menu.Item>
+          <Menu.Item key="bookings" icon={<ScheduleOutlined />} onClick={() => navigate('/Bookinginfo')}>Bookings</Menu.Item>
+        
+        </Menu>
+      </Sider>
 
-const Bookings = () => (
-  <Card title="Bookings" style={styles.card}>
-    <Link to="/admin">
-      <Button>Back to Dashboard</Button>
-    </Link>
-  </Card>
-);
-
-// Styles
-const styles = {
-  logo: {
-    height: '32px',
-    margin: '16px',
-    color: 'white',
-    textAlign: 'center',
-    fontSize: '18px',
-  },
-  header: {
-    background: '#fff',
-    padding: '0 24px',
-    boxShadow: '0 1px 4px rgba(0, 21, 41, 0.08)',
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: '20px',
-    margin: 0,
-    color: '#333',
-    flex: 1, // pushes button right
-  },
-  resetButton: {
-    height: '36px',
-  },
-  content: {
-    margin: '24px 16px',
-    padding: 24,
-    background: '#fff',
-    minHeight: 280,
-  },
-  card: {
-    marginBottom: '24px',
-  },
-  buttonContainer: {
-    display: 'flex',
-    gap: '16px',
-    flexWrap: 'wrap',
-  },
-  button: {
-    minWidth: '200px',
-    height: '80px',
-    fontSize: '16px',
-  },
-  statsContainer: {
-    display: 'flex',
-    gap: '24px',
-    flexWrap: 'wrap',
-  },
-  statBox: {
-    flex: '1 1 30%',
-    textAlign: 'center',
-    fontSize: '18px',
-  },
+      <Layout>
+        <Header style={{ padding: '0 24px', background: '#53d726', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Title level={4} style={{ margin: 0, color: "#fff" }}>Admin Dashboard</Title>
+          <LiveClock />
+        </Header>
+        <Content style={{ margin: '24px 16px 0' }}>
+          <div style={{ padding: 24, minHeight: 360, background: colorBgContainer, borderRadius: borderRadiusLG }}>
+            <Dashboard 
+              onResetPassword={() => navigate("/Resetpassword")} 
+              onNavigate={(path) => navigate(path)}
+            />
+          </div>
+        </Content>
+      </Layout>
+    </Layout>
+  );
 };
 
 export default Admin;
