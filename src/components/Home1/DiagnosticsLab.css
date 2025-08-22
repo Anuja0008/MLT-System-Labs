@@ -186,3 +186,259 @@ body {
   color: white;
   text-align: center;
 }
+/* Global Reset */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f5f8fa;
+  color: #333;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+/* Page Layout */
+.diagnostics-lab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  position: fixed;
+  padding: 1rem 2rem;
+  background: linear-gradient(90deg, #3b8d3b, #68b06f);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-bottom: 3px solid #e6e1e1;
+  z-index: 1000;
+}
+
+.navbar-brand h1 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.nav-links li a:hover {
+  color: #ffdd57;
+  border-bottom: 2px solid #ffdd57;
+  padding-bottom: 2px;
+}
+
+/* Hero Section */
+.hero-section {
+  width: 100%;
+  min-height: 80vh;
+  padding: 6rem 2rem;
+  background: linear-gradient(rgba(59,141,59,0.7), rgba(0,0,0,0.6)), 
+              url("../../Photos/laboratory.jpg") center/cover no-repeat;
+  color: white;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hero-content h2 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  max-width: 600px;
+  margin-inline: auto;
+}
+
+.cta-button {
+  padding: 0.9rem 2rem;
+  background-color: #ffdd57;
+  border: none;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.cta-button:hover {
+  background-color: #ffc107;
+  transform: translateY(-2px);
+}
+
+/* Services Section */
+.services-section {
+  padding: 5rem 2rem;
+  text-align: center;
+  background: #ffffff;
+}
+
+.services-section h2 {
+  font-size: 2.2rem;
+  margin-bottom: 3rem;
+  font-weight: 700;
+  color: #2f5d37;
+}
+
+/* Scrollable Services */
+.services-grid {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 1rem;
+}
+
+.services-grid::-webkit-scrollbar {
+  height: 6px;
+}
+.services-grid::-webkit-scrollbar-thumb {
+  background: #3b8d3b;
+  border-radius: 5px;
+}
+
+/* Service Card */
+.service-card {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid #eaeaea;
+  padding: 1.8rem;
+  border-radius: 15px;
+  min-width: 260px;
+  max-width: 280px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+}
+
+.service-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+.service-card h3 {
+  font-size: 1.3rem;
+  color: #2f5d37;
+  margin-bottom: 10px;
+}
+
+.service-card p {
+  font-size: 0.95rem;
+  color: #555;
+}
+
+/* About Section */
+.about-section {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 3rem 2rem;
+  background: #f5f8fa;
+}
+
+.image-container {
+  flex: 1 1 300px;
+  max-width: 320px;
+  text-align: center;
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.image-container img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.image-container h1 {
+  font-size: 1.5rem;
+  color: #2f5d37;
+}
+
+.image-container h4 {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* Pre-Test Instructions */
+.apply-note {
+  padding: 3rem 2rem;
+  background: #ffffff;
+}
+
+.apply-note h2 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  color: #2f5d37;
+}
+
+.apply-note table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+}
+
+.apply-note th, .apply-note td {
+  border: 1px solid #ddd;
+  padding: 0.8rem;
+  text-align: left;
+}
+
+.apply-note th {
+  background: #3b8d3b;
+  color: white;
+}
+
+.apply-note tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+.apply-note ul, .apply-note ol {
+  padding-left: 1.2rem;
+  margin-top: 0.5rem;
+  line-height: 1.6;
+}
+
+/* Footer */
+.footer {
+  width: 100%;
+  padding: 1rem;
+  background: #2f5d37;
+  color: white;
+  text-align: center;
+  margin-top: 2rem;
+}

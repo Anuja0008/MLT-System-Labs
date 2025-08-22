@@ -178,7 +178,7 @@ const ViewPatient = () => {
             <Menu.Item
               key="add-assistant"
               icon={<UserAddOutlined />}
-              onClick={() => navigate("/ADDASSITANT")}
+              onClick={() => navigate("/ADDASSISTANT")}
             >
               Add Assistant
             </Menu.Item>

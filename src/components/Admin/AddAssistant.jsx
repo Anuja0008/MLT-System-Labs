@@ -161,7 +161,7 @@ const ADDASSISTANT = () => {
             Dashboard
           </Menu.Item>
           <Menu.SubMenu key="assistants" icon={<DashboardOutlined />} title="Assistants">
-            <Menu.Item key="add-assistant" icon={<UserAddOutlined />} onClick={() => navigate("/ADDASSITANT")}>
+            <Menu.Item key="add-assistant" icon={<UserAddOutlined />} onClick={() => navigate("/ADDASSISTANT")}>
               Add Assistant
             </Menu.Item>
             <Menu.Item key="delete-assistant" icon={<UserDeleteOutlined />} onClick={() => navigate("/DELETEASSISTANT")}>

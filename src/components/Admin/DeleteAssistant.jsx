@@ -103,7 +103,7 @@ function DELETEASSISTANT() {
             fontSize: "1.2rem",
           }}
         >
-          <TeamOutlined style={{ marginRight: 8 }} /> Doctor Portal
+          <TeamOutlined style={{ marginRight: 8 }} />Assistant Portal
         </div>
         <Menu
           theme="dark"
@@ -116,7 +116,7 @@ function DELETEASSISTANT() {
           </Menu.Item>
 
           <Menu.SubMenu key="assistants" icon={<TeamOutlined />} title="Assistants">
-            <Menu.Item key="add-assistant" icon={<UserAddOutlined />} onClick={() => navigate("/ADDASSITANT")}>
+            <Menu.Item key="add-assistant" icon={<UserAddOutlined />} onClick={() => navigate("/ADDASSISTANT")}>
               Add Assistant
             </Menu.Item>
             <Menu.Item key="delete-assistant" icon={<UserDeleteOutlined />}>
