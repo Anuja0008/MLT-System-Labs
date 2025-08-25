@@ -14,7 +14,12 @@ import {
   addDoc,
   updateDoc
 } from 'firebase/firestore';
+import emailjs from 'emailjs-com';
 import './Appointment.css';
+
+const SERVICE_ID = "service_ptg659a";
+const TEMPLATE_ID = "template_cv7xjyt";
+const USER_ID = "_4NAbg1gFi1YYr8GJ";
 
 const Appointments = () => {
   const navigate = useNavigate();
@@ -41,7 +46,11 @@ const Appointments = () => {
 
       const appointmentsData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data(),
+        patientFullName: doc.data().patientFullName || 'N/A',
+        patientName: doc.data().patientName || 'N/A', // email
+        testType: doc.data().testType || 'N/A',
+        date: doc.data().date || 'N/A',
+        isConfirmed: doc.data().isConfirmed || false
       }));
 
       setAppointments(appointmentsData);
@@ -65,11 +74,29 @@ const Appointments = () => {
     }
   };
 
-  const handleConfirm = async (id) => {
+  const handleConfirm = async (appointment) => {
     try {
-      await updateDoc(doc(db, 'Bookings', id), { isConfirmed: true });
+      await updateDoc(doc(db, 'Bookings', appointment.id), { isConfirmed: true });
       alert('Appointment confirmed successfully!');
       fetchAppointments();
+
+      const templateParams = {
+        to_email: appointment.patientName, // email
+        patient_name: appointment.patientFullName,
+        test_type: appointment.testType,
+        date: appointment.date,
+      };
+
+      emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, USER_ID)
+        .then((response) => {
+          console.log("Email sent:", response.status, response.text);
+          alert('Confirmation email sent to patient!');
+        })
+        .catch((error) => {
+          console.error("Error sending email:", error);
+          alert('Failed to send confirmation email.');
+        });
+
     } catch (error) {
       console.error('Error confirming appointment:', error);
       alert('Failed to confirm appointment. Try again.');
@@ -89,7 +116,7 @@ const Appointments = () => {
       const historyRef = collection(db, 'History');
 
       // Remove existing booking if exists
-      const existingQ = query(bookingsRef, where('patientEmail', '==', formData.patientEmail));
+      const existingQ = query(bookingsRef, where('patientName', '==', formData.patientEmail));
       const existingSnapshot = await getDocs(existingQ);
 
       if (!existingSnapshot.empty) {
@@ -98,12 +125,9 @@ const Appointments = () => {
         console.log('Existing appointment deleted.');
       }
 
-      // Use manually entered full name
-      const fullName = formData.patientFullName;
-
       const newBooking = {
-        patientName: formData.patientEmail,
-        patientFullName: fullName,
+        patientName: formData.patientEmail, // email
+        patientFullName: formData.patientFullName,
         testType: formData.testType,
         date: formData.date,
         timestamp: new Date(),
@@ -160,7 +184,7 @@ const Appointments = () => {
                     <td>{appointment.isConfirmed ? 'Confirmed' : 'Pending'}</td>
                     <td>
                       {!appointment.isConfirmed && (
-                        <button onClick={() => handleConfirm(appointment.id)} className="confirm-button">
+                        <button onClick={() => handleConfirm(appointment)} className="confirm-button">
                           Confirm
                         </button>
                       )}

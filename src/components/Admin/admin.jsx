@@ -175,28 +175,32 @@ const TestPopularityPie = () => {
 
 // ================= Dashboard Stats =================
 const Dashboard = ({ onResetPassword, onNavigate }) => {
-  const [counts, setCounts] = React.useState({ patients: 0, assistants: 0, bookings: 0, active: 0 });
+  const [counts, setCounts] = React.useState({ patients: 0, assistants: 0, bookings: 0, active: 0, approved: 0 });
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     const fetchCounts = async () => {
       try {
         setLoading(true);
+        // Fetch users
         const usersSnap = await getDocs(collection(db, 'users'));
         const allUsers = usersSnap.docs.map(d => d.data());
-
         const patientsCount = allUsers.filter(u => u.role === "Patient").length;
         const assistantsCount = allUsers.filter(u => u.role === "Assistant").length;
 
+        // Fetch bookings
         const bookingsSnap = await getDocs(collection(db, 'Bookings'));
+        const bookingsData = bookingsSnap.docs.map(d => d.data());
         const bookingsCount = bookingsSnap.size;
-        const activeCount = bookingsSnap.docs.filter(d => d.data().status === "active").length;
+        const activeCount = bookingsData.filter(b => !b.isConfirmed).length; // Pending
+        const approvedCount = bookingsData.filter(b => b.isConfirmed).length; // Approved
 
         setCounts({
           patients: patientsCount,
           assistants: assistantsCount,
           bookings: bookingsCount,
-          active: activeCount
+          active: activeCount,
+          approved: approvedCount
         });
       } catch (err) {
         console.error('Error fetching dashboard stats:', err);
@@ -204,7 +208,6 @@ const Dashboard = ({ onResetPassword, onNavigate }) => {
         setLoading(false);
       }
     };
-
     fetchCounts();
   }, []);
 
@@ -212,7 +215,8 @@ const Dashboard = ({ onResetPassword, onNavigate }) => {
     { title: 'Total Patients', value: counts.patients, icon: <UserOutlined />, gradient: 'linear-gradient(135deg, #6398cb 0%, #096dd9 100%)' },
     { title: 'Total Assistants', value: counts.assistants, icon: <TeamOutlined />, gradient: 'linear-gradient(135deg, #518b97 0%, #179ba4 100%)' },
     { title: 'Total Bookings', value: counts.bookings, icon: <CalendarOutlined />, gradient: 'linear-gradient(135deg, #8c64c5 0%, #5221a0 100%)' },
-    { title: 'Active Bookings', value: counts.active, icon: <ScheduleOutlined />, gradient: 'linear-gradient(135deg, #f7c664 0%, #d48806 100%)' }
+    { title: 'Pending Bookings', value: counts.active, icon: <ScheduleOutlined />, gradient: 'linear-gradient(135deg, #f7c664 0%, #d48806 100%)' },
+    { title: 'Approved Bookings', value: counts.approved, icon: <ScheduleOutlined />, gradient: 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)' }
   ];
 
   return (
@@ -269,9 +273,8 @@ const Admin = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Add your logout logic here, e.g. Firebase signOut
     console.log("Logged out!");
-    navigate("/login"); // redirect to login page
+    navigate("/login");
   };
 
   return (
@@ -305,7 +308,6 @@ const Admin = () => {
           </Menu>
         </div>
 
-        {/* Logout button at bottom */}
         <div style={{ padding: 16 }}>
           <Button type="primary" icon={<LogoutOutlined />} block onClick={handleLogout}>
             Logout
