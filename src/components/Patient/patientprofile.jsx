@@ -1,79 +1,84 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db } from '../../firebase/db'; // Import Firestore
-import { collection, query, where, getDocs, addDoc, deleteDoc } from 'firebase/firestore'; // Import deleteDoc
-import './PatientProfile.css'; // Import the new CSS file
+import { db } from '../../firebase/db';
+import { collection, query, where, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
+import './PatientProfile.css';
 
 const PatientProfile = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
 
-  // State for booking form
   const [formData, setFormData] = useState({
-    patientName: user ? user.email : '', // Pre-fill with user's email if user exists
+    patientFullName: user?.name || '',
+    patientName: user?.email || '',
     testType: '',
     date: '',
   });
 
-  // State for booking history
   const [bookingHistory, setBookingHistory] = useState([]);
 
-  // Check if user is logged in
+  // Redirect if user not logged in
   useEffect(() => {
-    if (!user) {
-      navigate('/login');
-    }
+    if (!user) navigate('/login');
   }, [user, navigate]);
 
-  // Fetch booking history when component mounts
+  // Fetch booking history (current + past)
   useEffect(() => {
     const fetchBookingHistory = async () => {
-      if (user) {
-        const q = query(collection(db, 'History'), where('patientName', '==', user.email));
-        const querySnapshot = await getDocs(q);
-        const bookings = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          date: doc.data().date,
-          patientName: doc.data().patientName,
-          testType: doc.data().testType,
-        }));
-        setBookingHistory(bookings);
+      if (!user) return;
+
+      try {
+        const bookingsRef = collection(db, 'Bookings');
+        const historyRef = collection(db, 'History');
+
+        const bookingsQuery = query(bookingsRef, where('patientName', '==', user.email));
+        const historyQuery = query(historyRef, where('patientName', '==', user.email));
+
+        const [bookingsSnap, historySnap] = await Promise.all([
+          getDocs(bookingsQuery),
+          getDocs(historyQuery)
+        ]);
+
+        const currentBookings = bookingsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const pastBookings = historySnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        setBookingHistory([...currentBookings, ...pastBookings]);
+      } catch (err) {
+        console.error('Error fetching booking history:', err);
       }
     };
 
     fetchBookingHistory();
   }, [user]);
 
+  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  // Handle booking submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const bookingsRef = collection(db, 'Bookings');
       const historyRef = collection(db, 'History');
 
-      // Query Firestore to find existing bookings for the user
-      const q = query(bookingsRef, where('patientName', '==', user.email));
-      const querySnapshot = await getDocs(q);
+      // Move old bookings to history
+      const oldBookingsQuery = query(bookingsRef, where('patientName', '==', user.email));
+      const snapshot = await getDocs(oldBookingsQuery);
 
-      const moveToHistoryPromises = querySnapshot.docs.map((doc) => 
+      const movePromises = snapshot.docs.map(doc => 
         addDoc(historyRef, { ...doc.data(), timestamp: new Date() })
       );
-      await Promise.all(moveToHistoryPromises);
+      await Promise.all(movePromises);
 
-
-      
-
-      // Delete all existing bookings before adding a new one
-      const deletePromises = querySnapshot.docs.map((doc) => deleteDoc(doc.ref));
+      const deletePromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
       await Promise.all(deletePromises);
 
-      // Add new booking after deleting the old one
+      // Add new booking
       await addDoc(bookingsRef, {
+        patientFullName: formData.patientFullName,
         patientName: formData.patientName,
         testType: formData.testType,
         date: formData.date,
@@ -81,46 +86,61 @@ const PatientProfile = () => {
       });
 
       alert('Booking updated successfully!');
-      setFormData({ patientName: user.email, testType: '', date: '' });
+      setFormData(prev => ({ ...prev, testType: '', date: '' }));
 
       // Refresh booking history
-      const newQuerySnapshot = await getDocs(query(bookingsRef, where('patientName', '==', user.email)));
-      const updatedBookings = newQuerySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        date: doc.data().date,
-        patientName: doc.data().patientName,
-        testType: doc.data().testType,
-      }));
+      const [bookingsSnap, historySnap] = await Promise.all([
+        getDocs(query(bookingsRef, where('patientName', '==', user.email))),
+        getDocs(query(historyRef, where('patientName', '==', user.email))),
+      ]);
 
-      setBookingHistory(updatedBookings);
-    } catch (error) {
-      console.error('Error updating booking:', error);
-      alert('Failed to update booking. Try again.');
+      const currentBookings = bookingsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const pastBookings = historySnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      setBookingHistory([...currentBookings, ...pastBookings]);
+    } catch (err) {
+      console.error('Error updating booking:', err);
+      alert('Failed to update booking.');
+    }
+  };
+
+  // Delete a booking from History
+  const handleDeleteHistory = async (id) => {
+    try {
+      await deleteDoc(doc(db, 'History', id));
+      alert('Booking deleted from history successfully!');
+      setBookingHistory(prev => prev.filter(b => b.id !== id));
+    } catch (err) {
+      console.error('Error deleting booking from history:', err);
+      alert('Failed to delete booking from history.');
     }
   };
 
   return (
     <div className="patient-profile-container">
-      {/* Navigation Header */}
       <header className="header-bar">
         <h1>Patient Portal</h1>
         <nav>
           <button onClick={() => navigate('/RESULT')} className="nav-button1">Check Results</button>
-          <button onClick={() => {
-            localStorage.removeItem("user");
-            navigate('/login');
-          }} className="log-button1">Logout</button>
+          <button
+            onClick={() => {
+              localStorage.removeItem("user");
+              navigate('/login');
+            }}
+            className="log-button1"
+          >
+            Logout
+          </button>
         </nav>
       </header>
 
-      {/* Patient Profile */}
       <section className="patient-info">
         <h2>Patient Profile</h2>
         <p style={{ fontSize: '24px', textAlign: 'center', margin: '10px 0' }}>
-          <strong style={{ fontWeight: 'bold', fontSize: '28px', color: '#333' }}>Email:</strong> {user.email}
+          <strong style={{ fontSize: '28px', color: '#333' }}>Name:</strong> {formData.patientFullName}
         </p>
         <p style={{ fontSize: '24px', textAlign: 'center', margin: '10px 0' }}>
-          <strong style={{ fontWeight: 'bold', fontSize: '28px', color: '#333' }}>Role:</strong> {user.role}
+          <strong style={{ fontSize: '28px', color: '#333' }}>Role:</strong> {user?.role}
         </p>
       </section>
 
@@ -130,15 +150,26 @@ const PatientProfile = () => {
 
       <form onSubmit={handleSubmit} className="booking-form">
         <div className="form-group">
-          <label htmlFor="patientName">👤 Patient Name:</label>
+          <label htmlFor="patientFullName">👤 Patient Full Name:</label>
           <input
             type="text"
+            id="patientFullName"
+            name="patientFullName"
+            value={formData.patientFullName}
+            onChange={handleChange}
+            required
+            placeholder="Enter your full name"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="patientName">📧 Patient Email:</label>
+          <input
+            type="email"
             id="patientName"
             name="patientName"
             value={formData.patientName}
-            onChange={handleChange}
-            required
-            placeholder="Enter your name"
+            readOnly
           />
         </div>
 
@@ -180,30 +211,42 @@ const PatientProfile = () => {
             color: "white",
             padding: "10px 20px",
             border: "none",
-            cursor: "pointer",
-            fontSize: "16px",
             borderRadius: "5px",
+            cursor: "pointer",
             transition: "background-color 0.3s ease",
           }}
-          onMouseOver={(e) => e.target.style.backgroundColor = "#f8a600"}
+          onMouseOver={(e) => e.target.style.backgroundColor = "#e69b00"}
           onMouseOut={(e) => e.target.style.backgroundColor = "#FFAC1C"}
-          onMouseDown={(e) => e.target.style.backgroundColor = "#e88900"}
-          onMouseUp={(e) => e.target.style.backgroundColor = "#f8a600"}
+          onMouseDown={(e) => e.target.style.backgroundColor = "#cc8f00"}
+          onMouseUp={(e) => e.target.style.backgroundColor = "#e69b00"}
         >
           📌 Book Now
         </button>
       </form>
 
-      {/* Booking History */}
       <section className="booking-history">
         <h3>Your Booking History</h3>
         {bookingHistory.length > 0 ? (
           <ul>
-            {bookingHistory.map((booking, index) => (
-              <li key={index}>
+            {bookingHistory.map((booking) => (
+              <li key={booking.id}>
                 <p><strong>Test Type:</strong> {booking.testType}</p>
-                <p><strong>Patient Name:</strong> {booking.patientName}</p>
+                <p><strong>Patient Name:</strong> {booking.patientFullName}</p>
                 <p><strong>Date:</strong> {new Date(booking.date).toLocaleDateString()}</p>
+                <button
+                  onClick={() => handleDeleteHistory(booking.id)}
+                  style={{
+                    backgroundColor: "#FF4C4C",
+                    color: "white",
+                    padding: "5px 10px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    marginTop: "5px"
+                  }}
+                >
+                  Delete
+                </button>
               </li>
             ))}
           </ul>

@@ -18,7 +18,7 @@ import emailjs from 'emailjs-com';
 import './Appointment.css';
 
 const SERVICE_ID = "service_ptg659a";
-const TEMPLATE_ID = "template_cv7xjyt";
+const TEMPLATE_ID = "template_cv7xjyt"; // your EmailJS template ID
 const USER_ID = "_4NAbg1gFi1YYr8GJ";
 
 const Appointments = () => {
@@ -38,6 +38,7 @@ const Appointments = () => {
     }
   }, [user, navigate]);
 
+  // Fetch latest appointments
   const fetchAppointments = async () => {
     try {
       const bookingsRef = collection(db, 'Bookings');
@@ -63,10 +64,59 @@ const Appointments = () => {
     fetchAppointments();
   }, []);
 
-  const handleDelete = async (id) => {
+  // Send dynamic EmailJS email
+  const sendEmail = (appointment, action) => {
+    let statusTitle = "";
+    let statusMessage = "";
+
+    if (action === "confirmed") {
+      statusTitle = "Appointment Confirmed!";
+      statusMessage = `Your appointment at Ariana Labs has been successfully confirmed.`;
+    } else if (action === "cancelled") {
+      statusTitle = "Appointment Cancelled";
+      statusMessage = `Your appointment at Ariana Labs has been cancelled by the admin.`;
+    }
+
+    const templateParams = {
+      to_email: appointment.patientName,
+      patient_name: appointment.patientFullName,
+      test_type: appointment.testType,
+      date: appointment.date,
+      statusTitle: statusTitle,
+      statusMessage: statusMessage,
+      from_name: "Ariana Labs"
+    };
+
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, USER_ID)
+      .then((response) => {
+        console.log("Email sent:", response.status, response.text);
+        alert(`Email sent to patient (${action})!`);
+      })
+      .catch((error) => {
+        console.error("Error sending email:", error);
+        alert('Failed to send email.');
+      });
+  };
+
+  // Confirm appointment
+  const handleConfirm = async (appointment) => {
     try {
-      await deleteDoc(doc(db, 'Bookings', id));
+      await updateDoc(doc(db, 'Bookings', appointment.id), { isConfirmed: true });
+      alert('Appointment confirmed successfully!');
+      sendEmail(appointment, 'confirmed');
+      fetchAppointments();
+    } catch (error) {
+      console.error('Error confirming appointment:', error);
+      alert('Failed to confirm appointment. Try again.');
+    }
+  };
+
+  // Delete appointment
+  const handleDelete = async (appointment) => {
+    try {
+      await deleteDoc(doc(db, 'Bookings', appointment.id));
       alert('Appointment deleted successfully!');
+      sendEmail(appointment, 'cancelled');
       fetchAppointments();
     } catch (error) {
       console.error('Error deleting appointment:', error);
@@ -74,43 +124,34 @@ const Appointments = () => {
     }
   };
 
-  const handleConfirm = async (appointment) => {
-    try {
-      await updateDoc(doc(db, 'Bookings', appointment.id), { isConfirmed: true });
-      alert('Appointment confirmed successfully!');
-      fetchAppointments();
+  // Handle form input changes and auto-fill patient name
+  const handleChange = async (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
 
-      const templateParams = {
-        to_email: appointment.patientName, // email
-        patient_name: appointment.patientFullName,
-        test_type: appointment.testType,
-        date: appointment.date,
-      };
+    // Auto-fill patient name by email
+    if (name === 'patientEmail' && value) {
+      try {
+        const usersRef = collection(db, 'users'); // Firestore 'users' collection
+        const q = query(usersRef, where('email', '==', value));
+        const querySnapshot = await getDocs(q);
 
-      emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, USER_ID)
-        .then((response) => {
-          console.log("Email sent:", response.status, response.text);
-          alert('Confirmation email sent to patient!');
-        })
-        .catch((error) => {
-          console.error("Error sending email:", error);
-          alert('Failed to send confirmation email.');
-        });
-
-    } catch (error) {
-      console.error('Error confirming appointment:', error);
-      alert('Failed to confirm appointment. Try again.');
+        if (!querySnapshot.empty) {
+          const userDoc = querySnapshot.docs[0].data();
+          setFormData((prev) => ({ ...prev, patientFullName: userDoc.fullName || userDoc.name }));
+        } else {
+          // If no user found, clear full name field
+          setFormData((prev) => ({ ...prev, patientFullName: '' }));
+        }
+      } catch (error) {
+        console.error('Error fetching user by email:', error);
+      }
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
+  // Book a new appointment
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const bookingsRef = collection(db, 'Bookings');
       const historyRef = collection(db, 'History');
@@ -126,7 +167,7 @@ const Appointments = () => {
       }
 
       const newBooking = {
-        patientName: formData.patientEmail, // email
+        patientName: formData.patientEmail,
         patientFullName: formData.patientFullName,
         testType: formData.testType,
         date: formData.date,
@@ -138,14 +179,8 @@ const Appointments = () => {
       await addDoc(historyRef, { ...newBooking, bookingId: docRef.id });
 
       alert('Booking successful!');
-      setFormData({
-        patientEmail: '',
-        patientFullName: '',
-        testType: '',
-        date: ''
-      });
+      setFormData({ patientEmail: '', patientFullName: '', testType: '', date: '' });
       fetchAppointments();
-
     } catch (error) {
       console.error('Error booking appointment:', error);
       alert('Failed to book appointment. Try again.');
@@ -188,7 +223,7 @@ const Appointments = () => {
                           Confirm
                         </button>
                       )}
-                      <button onClick={() => handleDelete(appointment.id)} className="delete-button">
+                      <button onClick={() => handleDelete(appointment)} className="delete-button">
                         Delete
                       </button>
                     </td>
@@ -204,18 +239,6 @@ const Appointments = () => {
         <form onSubmit={handleSubmit} className="booking-form">
           <h3>Book a New Appointment</h3>
           <div>
-            <label htmlFor="patientFullName">Patient Full Name:</label>
-            <input
-              type="text"
-              id="patientFullName"
-              name="patientFullName"
-              value={formData.patientFullName}
-              onChange={handleChange}
-              required
-              placeholder="Enter patient's full name"
-            />
-          </div>
-          <div>
             <label htmlFor="patientEmail">Patient Email:</label>
             <input
               type="email"
@@ -225,6 +248,18 @@ const Appointments = () => {
               onChange={handleChange}
               required
               placeholder="Enter patient email"
+            />
+          </div>
+          <div>
+            <label htmlFor="patientFullName">Patient Full Name:</label>
+            <input
+              type="text"
+              id="patientFullName"
+              name="patientFullName"
+              value={formData.patientFullName}
+              onChange={handleChange}
+              required
+              placeholder="Enter patient's full name"
             />
           </div>
           <div>

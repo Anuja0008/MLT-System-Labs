@@ -1,14 +1,22 @@
 import React from 'react';
 import { FaPhoneAlt, FaEnvelope, FaMicroscope, FaFlask, FaBrain } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import './about.css';
 
 function About() {
+  const navigate = useNavigate(); // Initialize useNavigate hook
+
   const features = [
     { icon: <FaMicroscope size={24} />, title: "Advanced Equipment", description: "Cutting-edge technology for precise research" },
     { icon: <FaFlask size={24} />, title: "Innovative Research", description: "Pushing boundaries in scientific discovery" },
     { icon: <FaBrain size={24} />, title: "Expert Team", description: "Collaborate with leading scientists" }
   ];
+
+  // Handler for Lab Tour button click
+  const handleLabTourClick = () => {
+    navigate('/'); // Navigate to /lab-tour route (adjust as needed)
+  };
 
   return (
     <div className="aboutlab-container">
@@ -18,7 +26,9 @@ function About() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
-        <h1 className="gradienttext">Welcome to Our <span className="highlight">Ariana Lab</span></h1>
+        <h1 className="gradienttext">
+          Welcome to Our <span className="highlight">Ariana Lab</span>
+        </h1>
         
         <p className="leadtext">
           Where science meets creativity in a dynamic, collaborative environment designed to 
@@ -43,17 +53,10 @@ function About() {
 
         <div className="aboutcontent">
           <p>
-            Our AI-enhanced lab integrates the latest technology with innovative methodologies
-            to explore the frontiers of science. Designed for researchers, students, and innovators,
-            our space combines <span className="text-highlight">state-of-the-art equipment</span> with 
-            <span className="text-highlight"> expert guidance</span> to maximize your potential.
+            Our lab integrates the latest technology with innovative methodologies to explore the frontiers of science. Designed for researchers, students, and innovators, our space combines <span className="text-highlight">state-of-the-art equipment</span> with <span className="text-highlight">expert guidance</span> to maximize your potential.
           </p>
           <p>
-            Through our <span className="text-highlight">interactive workshops</span>, 
-            <span className="text-highlight"> collaborative projects</span>, and 
-            <span className="text-highlight"> hands-on learning programs</span>, we create an ecosystem
-            where ideas flourish and solutions emerge. Our AI-driven analytics tools provide real-time
-            insights to accelerate your research.
+            Through our <span className="text-highlight">interactive workshops</span>, <span className="text-highlight">collaborative projects</span>, and <span className="text-highlight">hands-on learning programs</span>, we create an ecosystem where ideas flourish and solutions emerge. Our advanced analytics tools provide real-time insights to accelerate your research.
           </p>
         </div>
 
@@ -67,7 +70,7 @@ function About() {
               <div className="contacticon">
                 <FaPhoneAlt size={24} />
               </div>
-              <p>(123) 456-7890</p>
+              <p>078 571 0663</p>
             </motion.div>
             <motion.div 
               className="contactitem"
@@ -76,10 +79,12 @@ function About() {
               <div className="contacticon">
                 <FaEnvelope size={24} />
               </div>
-              <p>info@lab.com</p>
+              <p>arianalab@gmail.com</p>
             </motion.div>
           </div>
-          <button className="ctabutton">Schedule a Lab Tour</button>
+          <button className="ctabutton" onClick={handleLabTourClick}>
+            Schedule a Lab Tour
+          </button>
         </div>
       </motion.div>
     </div>

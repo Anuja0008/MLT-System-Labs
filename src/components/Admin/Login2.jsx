@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Typography, message } from "antd";
+import { Form, Input, Button, Typography, Alert } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -8,14 +8,14 @@ import bgImage from "../../Photos/doc.jpg";
 
 const { Title } = Typography;
 
-message.config({ top: 100, duration: 3, maxCount: 3 });
-
 const Login2 = () => {
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(""); // ✅ track error message
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
     setLoading(true);
+    setErrorMsg(""); // reset old errors
     try {
       const { username, password } = values;
 
@@ -24,7 +24,7 @@ const Login2 = () => {
       const snapshot = await getDocs(q);
 
       if (snapshot.empty) {
-        message.error("Invalid username or password");
+        setErrorMsg("Login Failed"); // show under form
         setLoading(false);
         return;
       }
@@ -38,16 +38,15 @@ const Login2 = () => {
       });
 
       if (loginSuccess) {
-        // Save admin info in localStorage
         localStorage.setItem("user", JSON.stringify({ username }));
-        message.success("Login successful!");
-        navigate("/admin"); // go to admin dashboard
+        setErrorMsg(""); // clear error if success
+        navigate("/admin");
       } else {
-        message.error("Invalid username or password");
+        setErrorMsg("Login Failed");
       }
     } catch (err) {
       console.error("Login error:", err);
-      message.error("Something went wrong. Try again!");
+      setErrorMsg("Something went wrong. Try again!");
     } finally {
       setLoading(false);
     }
@@ -87,15 +86,43 @@ const Login2 = () => {
             name="username"
             rules={[{ required: true, message: "Please input your username!" }]}
           >
-            <Input prefix={<UserOutlined />} placeholder="Username" size="large" />
+            <Input
+              prefix={<UserOutlined />}
+              placeholder="Username"
+              size="large"
+            />
           </Form.Item>
 
           <Form.Item
             name="password"
-            rules={[{ required: true, message: "Please input your password!" }]}
+            rules={[
+              { required: true, message: "Please input your password!" },
+              { min: 6, message: "Password must be at least 6 characters!" },
+              { max: 16, message: "Password cannot be longer than 16 characters!" },
+              {
+                pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
+                message:
+                  "Password must include uppercase, lowercase, and a number!",
+              },
+            ]}
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="Password" size="large" />
+            <Input.Password
+              prefix={<LockOutlined />}
+              placeholder="Password"
+              size="large"
+              maxLength={16}
+            />
           </Form.Item>
+
+          {/* ✅ Show error message below fields */}
+          {errorMsg && (
+            <Alert
+              message={errorMsg}
+              type="error"
+              showIcon
+              style={{ marginBottom: 16 }}
+            />
+          )}
 
           <Form.Item>
             <Button
@@ -104,7 +131,11 @@ const Login2 = () => {
               block
               size="large"
               loading={loading}
-              style={{ background: "linear-gradient(135deg, #53d726, #096dd9)", border: "none", fontWeight: "bold" }}
+              style={{
+                background: "linear-gradient(135deg, #53d726, #096dd9)",
+                border: "none",
+                fontWeight: "bold",
+              }}
             >
               {loading ? "Logging in..." : "Login"}
             </Button>

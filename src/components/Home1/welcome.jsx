@@ -5,6 +5,9 @@ import "./testdetails.css";
 
 import contactImage from '../../Photos/bun.jpg';
 import contactImage1 from '../../Photos/egfr.jpg';
+import contactImage2 from '../../Photos/inr.jpg';
+import contactImage3 from '../../Photos/ids.jpeg';
+import contactImage4 from '../../Photos/Lipid.jpg';
 import Chatbot from '../Home1/chatbot'; 
 import BMI from '../Home1/BMI'; 
 
@@ -115,53 +118,43 @@ function Home1() {
   <h1>EGFR Test</h1>
     <img className="image" src={contactImage1} alt="Contact Us" />
     <h4 className="text1">
-      A blood urea nitrogen (BUN) test measures the amount of urea nitrogen in your blood.
-      Urea nitrogen is a waste product created when your liver breaks down protein.
-      A BUN test can help diagnose or monitor kidney disease.
-    </h4>
+     An eGFR (estimated glomerular filtration rate) test estimates how well your kidneys filter waste by measuring creatinine in your blood. It uses factors like age and sex to assess kidney function and detect kidney disease.</h4>
   </div>
 
   <div className="image-container">
-  <h1>EGFR Test</h1>
-    <img className="image" src={contactImage1} alt="Contact Us" />
+  <h1>INR Test</h1>
+    <img className="image" src={contactImage2} alt="Contact Us" />
     <h4 className="text1">
-      A blood urea nitrogen (BUN) test measures the amount of urea nitrogen in your blood.
-      Urea nitrogen is a waste product created when your liver breaks down protein.
-      A BUN test can help diagnose or monitor kidney disease.
-    </h4>
+    An INR (International Normalized Ratio) test measures how long your blood takes to clot. It’s mainly used to monitor warfarin treatment and helps detect clotting disorders or liver problems by standardizing clotting times.</h4>
   </div>
 </section>
 
 <section className="about-section">
   <div className="image-container">
-    <h1>BUN Test</h1>
-    <img className="image" src={contactImage} alt="Contact Us" />
+    <h1>IDS Test</h1>
+    <img className="image" src={contactImage3} alt="Contact Us" />
     <h4 className="text1">
-      A blood urea nitrogen (BUN) test measures the amount of urea nitrogen in your blood.
-      Urea nitrogen is a waste product created when your liver breaks down protein.
-      A BUN test can help diagnose or monitor kidney disease.
+     An Insulin Dose Calculator helps determine the correct insulin dose based on your blood sugar levels, carbohydrate intake, and activity. It supports effective diabetes management by personalizing insulin needs for safer and more accurate dosing.
     </h4>
   </div>
 
 
   <div className="image-container">
-  <h1>EGFR Test</h1>
-    <img className="image" src={contactImage1} alt="Contact Us" />
+  <h1>IDS Test</h1>
+    <img className="image" src={contactImage4} alt="Contact Us" />
     <h4 className="text1">
-      A blood urea nitrogen (BUN) test measures the amount of urea nitrogen in your blood.
-      Urea nitrogen is a waste product created when your liver breaks down protein.
-      A BUN test can help diagnose or monitor kidney disease.
+     A Lipid Profile test measures the levels of fats, including cholesterol and triglycerides, in your blood. It helps assess your risk for heart disease and guides treatment to maintain healthy cholesterol and lipid levels.
     </h4>
   </div>
 
   <div className="image-container">
-  <h1>EGFR Test</h1>
+  {/* <h1>EGFR Test</h1>
     <img className="image" src={contactImage1} alt="Contact Us" />
     <h4 className="text1">
       A blood urea nitrogen (BUN) test measures the amount of urea nitrogen in your blood.
       Urea nitrogen is a waste product created when your liver breaks down protein.
       A BUN test can help diagnose or monitor kidney disease.
-    </h4>
+    </h4> */}
     <Chatbot />
     <BMI/>
    

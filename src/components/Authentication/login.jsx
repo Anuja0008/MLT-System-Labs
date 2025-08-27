@@ -30,6 +30,14 @@ const Login = () => {
       // Validate email format
       if (!/\S+@\S+\.\S+/.test(email)) {
         setError("Please enter a valid email address.");
+        setLoading(false);
+        return;
+      }
+
+      // Validate password length
+      if (password.length < 8) {
+        setError("Password must be at least 8 characters long.");
+        setLoading(false);
         return;
       }
 
@@ -40,6 +48,7 @@ const Login = () => {
 
       if (querySnapshot.empty) {
         setError("No user found with this email.");
+        setLoading(false);
         return;
       }
 
@@ -51,12 +60,14 @@ const Login = () => {
       // Check if the password matches
       if (userData[PASSWORD_FIELD] !== password) {
         setError("Incorrect password. Please try again.");
+        setLoading(false);
         return;
       }
 
       // Check if the role matches (case-insensitive)
       if (userData[ROLE_FIELD].toLowerCase() !== role.toLowerCase()) {
         setError("Incorrect role selection.");
+        setLoading(false);
         return;
       }
 
@@ -70,17 +81,17 @@ const Login = () => {
 
       // Navigate to different profile pages based on user role
       switch (userData[ROLE_FIELD].toLowerCase()) {
-        case 'assistant':
-          navigate('/Doctorprofile'); // Redirect to Doctor Profile
+        case "assistant":
+          navigate("/Doctorprofile");
           break;
-        case 'patient':
-          navigate('/Patientprofile'); // Redirect to Patient Profile
+        case "patient":
+          navigate("/Patientprofile");
           break;
-        case 'admin':
-          navigate('/assistant-profile'); // Redirect to Assistant Profile
+        case "admin":
+          navigate("/assistant-profile");
           break;
         default:
-          navigate('/home'); // Fallback to home if role is unrecognized
+          navigate("/home");
       }
     } catch (error) {
       console.error("Login error:", error.message);
@@ -113,7 +124,7 @@ const Login = () => {
           textAlign: "center",
           boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.5)",
           backdropFilter: "blur(5px)",
-          opacity: "0.8"
+          opacity: "0.8",
         }}
       >
         <h2 style={{ marginBottom: "24px", fontSize: "28px", color: "#333", fontWeight: "600", fontFamily: "'Poppins', sans-serif" }}>
@@ -127,24 +138,25 @@ const Login = () => {
             <label style={{ display: "block", fontSize: "14px", color: "#555", fontWeight: "500", marginBottom: "8px", fontFamily: "'Poppins', sans-serif" }}>
               Email
             </label>
-            <input
-              type="email"
-              value={email}
-              placeholder="Enter your email"
-              onChange={(e) => setEmail(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "12px",
-                border: "1px solid #ddd",
-                borderRadius: "8px",
-                fontSize: "16px",
-                outline: "none",
-                transition: "all 0.3s ease-in-out",
-                fontFamily: "'Poppins', sans-serif",
-              }}
-              required
-              disabled={loading}
-            />
+         <input
+  type="email"
+  value={email}
+  placeholder="Enter your email"
+  onChange={(e) => setEmail(e.target.value.toLowerCase())} // force lowercase
+  style={{
+    width: "100%",
+    padding: "12px",
+    border: "1px solid #ddd",
+    borderRadius: "8px",
+    fontSize: "16px",
+    outline: "none",
+    transition: "all 0.3s ease-in-out",
+    fontFamily: "'Poppins', sans-serif",
+  }}
+  required
+  disabled={loading}
+/>
+
           </div>
 
           <div style={{ marginBottom: "20px", textAlign: "left" }}>
@@ -169,6 +181,7 @@ const Login = () => {
               required
               disabled={loading}
             />
+            <small style={{ color: "#555", fontSize: "12px" }}>Password must be at least 8 characters.</small>
           </div>
 
           <div style={{ marginBottom: "20px", textAlign: "left" }}>
@@ -190,7 +203,6 @@ const Login = () => {
               }}
               disabled={loading}
             >
-              {/* <option value="doctor">Doctor</option> */}
               <option value="patient">Patient</option>
               <option value="assistant">Assistant</option>
             </select>
@@ -224,6 +236,7 @@ const Login = () => {
                 textDecoration: "none",
                 fontSize: "14px",
                 fontFamily: "'Poppins', sans-serif",
+                marginRight: "10px",
               }}
             >
               Forgot Password?

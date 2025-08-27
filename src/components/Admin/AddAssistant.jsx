@@ -10,7 +10,7 @@ import {
   doc,
   updateDoc,
 } from "firebase/firestore";
-import { Layout, Menu, Button, Space, Typography } from "antd";
+import { Layout, Menu, Space, Typography } from "antd";
 import {
   TeamOutlined,
   UserAddOutlined,
@@ -18,16 +18,13 @@ import {
   DashboardOutlined,
   UserOutlined,
   ScheduleOutlined,
-  ReloadOutlined,
 } from "@ant-design/icons";
 
-// Import default assistant image
 import defaultAssistImg from "../../Photos/Assist.jpg";
 
 const { Header, Content, Sider } = Layout;
 const { Title } = Typography;
 
-// Live Clock Component
 const LiveClock = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   useEffect(() => {
@@ -36,13 +33,17 @@ const LiveClock = () => {
   }, []);
   return (
     <Space>
-    <span style={{ fontSize: "0.9rem", color: "#fff", fontWeight: "bold" }}>
-  {currentTime.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
-</span>
-<span style={{ fontWeight: "bold", fontSize: "1rem", color: "#fff" }}>
-  {currentTime.toLocaleTimeString()}
-</span>
-
+      <span style={{ fontSize: "0.9rem", color: "#fff", fontWeight: "bold" }}>
+        {currentTime.toLocaleDateString(undefined, {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })}
+      </span>
+      <span style={{ fontWeight: "bold", fontSize: "1rem", color: "#fff" }}>
+        {currentTime.toLocaleTimeString()}
+      </span>
     </Space>
   );
 };
@@ -53,6 +54,8 @@ const ADDASSISTANT = () => {
 
   const [assistants, setAssistants] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editId, setEditId] = useState(null);
+  const [errors, setErrors] = useState({});
   const [newAssistant, setNewAssistant] = useState({
     name: "",
     email: "",
@@ -63,7 +66,6 @@ const ADDASSISTANT = () => {
     address: "",
     password: "",
   });
-  const [editId, setEditId] = useState(null);
 
   useEffect(() => {
     if (!user) navigate("/login");
@@ -95,9 +97,39 @@ const ADDASSISTANT = () => {
       : age;
   };
 
+  const validateAssistant = (assistant) => {
+    const newErrors = {};
+
+    if (!assistant.name) newErrors.name = "Name is required";
+
+    if (
+      !assistant.email ||
+      !/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(assistant.email)
+    )
+      newErrors.email = "Valid lowercase email is required";
+
+    if (!assistant.gender) newErrors.gender = "Gender is required";
+
+    if (!assistant.dob || calculateAge(assistant.dob) < 18)
+      newErrors.dob = "Assistant must be at least 18 years old";
+
+    if (!assistant.contactNumber || assistant.contactNumber.length !== 10)
+      newErrors.contactNumber = "Contact number must be 10 digits";
+
+    if (!assistant.nicOrPassport || assistant.nicOrPassport.length !== 12)
+      newErrors.nicOrPassport = "NIC/Passport must be 12 characters";
+
+    if (!assistant.address) newErrors.address = "Address is required";
+
+    if (!editId && (!assistant.password || assistant.password.length !== 8))
+      newErrors.password = "Password must be 8 characters";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const addAssistant = async () => {
-    const age = calculateAge(newAssistant.dob);
-    if (age < 18) return alert("Assistant must be at least 18 years old.");
+    if (!validateAssistant(newAssistant)) return;
 
     try {
       await addDoc(collection(db, "users"), { ...newAssistant, role: "Assistant" });
@@ -115,6 +147,7 @@ const ADDASSISTANT = () => {
       const q = query(collection(db, "users"), where("role", "==", "Assistant"));
       const snapshot = await getDocs(q);
       setAssistants(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      setErrors({});
     } catch (error) {
       console.error("Error adding assistant:", error);
     }
@@ -124,9 +157,7 @@ const ADDASSISTANT = () => {
     const assistant = assistants.find((a) => a.id === id);
     if (!assistant) return;
 
-    if (assistant.dob && calculateAge(assistant.dob) < 18) {
-      return alert("Assistant must be at least 18 years old.");
-    }
+    if (!validateAssistant(assistant)) return;
 
     try {
       const docRef = doc(db, "users", id);
@@ -141,6 +172,7 @@ const ADDASSISTANT = () => {
       });
       alert("Assistant updated successfully");
       setEditId(null);
+      setErrors({});
     } catch (error) {
       console.error("Error updating assistant:", error);
       alert("Failed to update assistant");
@@ -151,52 +183,30 @@ const ADDASSISTANT = () => {
 
   return (
     <Layout style={{ minHeight: "100vh", fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
-      {/* Sidebar */}
       <Sider width={250} style={{ background: "#181c2e", height: "100vh", position: "fixed", left: 0, top: 0, overflow: "auto" }}>
         <div style={{ height: 64, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 600, fontSize: "1.2rem" }}>
           <TeamOutlined style={{ marginRight: 8 }} /> Doctor Portal
         </div>
         <Menu theme="dark" mode="inline" defaultSelectedKeys={["assistants"]} style={{ background: "transparent" }}>
-          <Menu.Item key="dashboard" icon={<DashboardOutlined />} onClick={() => navigate("/Admin")}>
-            Dashboard
-          </Menu.Item>
-          <Menu.SubMenu key="assistants" icon={<DashboardOutlined />} title="Assistants">
-            <Menu.Item key="add-assistant" icon={<UserAddOutlined />} onClick={() => navigate("/ADDASSISTANT")}>
-              Add Assistant
-            </Menu.Item>
-            <Menu.Item key="delete-assistant" icon={<UserDeleteOutlined />} onClick={() => navigate("/DELETEASSISTANT")}>
-              Delete Assistant
-            </Menu.Item>
+          <Menu.Item key="dashboard" icon={<DashboardOutlined />} onClick={() => navigate("/Admin")}>Dashboard</Menu.Item>
+          <Menu.SubMenu key="assistants" icon={<UserAddOutlined  />} title="Assistants">
+            <Menu.Item key="add-assistant" icon={<UserAddOutlined />} onClick={() => navigate("/ADDASSISTANT")}>Add Assistant</Menu.Item>
+            <Menu.Item key="delete-assistant" icon={<UserDeleteOutlined />} onClick={() => navigate("/DELETEASSISTANT")}>Delete Assistant</Menu.Item>
           </Menu.SubMenu>
-          <Menu.Item key="patients" icon={<UserOutlined />} onClick={() => navigate("/ViewPatient")}>
-            Patients
-          </Menu.Item>
-          <Menu.Item key="bookings" icon={<ScheduleOutlined />} onClick={() => navigate("/Bookinginfo")}>
-            Bookings
-          </Menu.Item>
+          <Menu.Item key="patients" icon={<UserOutlined />} onClick={() => navigate("/ViewPatient")}>Patients</Menu.Item>
+          <Menu.Item key="bookings" icon={<ScheduleOutlined />} onClick={() => navigate("/Bookinginfo")}>Bookings</Menu.Item>
         </Menu>
       </Sider>
 
-      {/* Main Layout */}
       <Layout style={{ marginLeft: 250, minHeight: "100vh" }}>
         <Header style={{ padding: "0 24px", background: "#53d726", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, zIndex: 1 }}>
-          <Title level={4} style={{ margin: 0, color: "#fff", fontSize: "1.5rem" }}>
-            Add Assistant Dashboard
-          </Title>
-          <Space>
-            <LiveClock />
-            {/* <Button type="primary" icon={<ReloadOutlined />} onClick={() => navigate("/ResetPassword")}>
-              Reset Password
-            </Button> */}
-          </Space>
+          <Title level={4} style={{ margin: 0, color: "#fff", fontSize: "1.5rem" }}>Add Assistant Dashboard</Title>
+          <Space><LiveClock /></Space>
         </Header>
 
         <Content style={{ margin: "24px 16px", overflowY: "auto", maxHeight: "calc(100vh - 64px)" }}>
           <div style={{ padding: 24, background: "#f9fafb", borderRadius: 12 }}>
-            {/* <h2 style={{ fontWeight: 700, fontSize: "2rem", color: "#181c2e" }}>Welcome</h2> */}
-            <p style={{ color: "#555", marginBottom: "2rem", fontSize: "1rem" }}>
-              Manage your assistants and update their details.
-            </p>
+            <p style={{ color: "#555", marginBottom: "2rem", fontSize: "1rem" }}>Manage your assistants and update their details.</p>
 
             {/* Assistant List */}
             <section>
@@ -206,130 +216,39 @@ const ADDASSISTANT = () => {
               ) : assistants.length > 0 ? (
                 <div style={{ display: "grid", gap: "1.5rem" }}>
                   {assistants.map((item) => (
-                    <div
-                      key={item.id}
-                      style={{
-                        position: "relative",
-                        backgroundColor: "white",
-                        padding: "1.5rem",
-                        borderRadius: "12px",
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                        transition: "box-shadow 0.3s ease",
-                        borderLeft: `4px solid #199121ff`,
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 4px 15px rgba(0,0,0,0.15)")}
-                      onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)")}
-                    >
-                      <img
-                        src={item.imageUrl || defaultAssistImg}
-                        alt={item.name}
-                        style={{
-                           position: "absolute",
-                           top: editId === item.id ? "12px" : "12px", // same top
-                           right: editId === item.id ? "12px" : "12px",
-                           width: editId === item.id ? "100px" : "200px", // shrink when editing
-                          height: editId === item.id ? "100px" : "200px",
-                              objectFit: "cover",
-                             borderRadius: "8px",
-                              border: "2px solid #53d726",
-                              transition: "all 0.3s ease", // smooth resize
-                        }}
-                      />
-
+                    <div key={item.id} style={{ position: "relative", backgroundColor: "white", padding: "1.5rem", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.1)", transition: "box-shadow 0.3s ease", borderLeft: `4px solid #199121ff` }}>
+                      <img src={item.imageUrl || defaultAssistImg} alt={item.name} style={{ position: "absolute", top: "12px", right: "12px", width: editId === item.id ? "100px" : "200px", height: editId === item.id ? "100px" : "200px", objectFit: "cover", borderRadius: "8px", border: "2px solid #53d726", transition: "all 0.3s ease" }} />
                       {editId === item.id ? (
                         <>
-                          <input
-                            style={inputStyle}
-                            type="text"
-                            value={item.name}
-                            placeholder="Name"
-                            onChange={(e) =>
-                              setAssistants(
-                                assistants.map((a) => (a.id === item.id ? { ...a, name: e.target.value } : a))
-                              )
-                            }
-                          />
-                          <input
-                            style={inputStyle}
-                            type="email"
-                            value={item.email}
-                            placeholder="Email"
-                            onChange={(e) =>
-                              setAssistants(
-                                assistants.map((a) => (a.id === item.id ? { ...a, email: e.target.value } : a))
-                              )
-                            }
-                          />
-                          <select
-                            style={inputStyle}
-                            value={item.gender}
-                            onChange={(e) =>
-                              setAssistants(
-                                assistants.map((a) => (a.id === item.id ? { ...a, gender: e.target.value } : a))
-                              )
-                            }
-                          >
+                          <input style={inputStyle} type="text" value={item.name} placeholder="Name" onChange={(e) => setAssistants(assistants.map(a => a.id === item.id ? { ...a, name: e.target.value } : a))} />
+                          {errors.name && <span style={{ color: "red" }}>{errors.name}</span>}
+
+                          <input style={inputStyle} type="email" value={item.email} placeholder="Email (lowercase only)" onChange={(e) => setAssistants(assistants.map(a => a.id === item.id ? { ...a, email: e.target.value.toLowerCase() } : a))} />
+                          {errors.email && <span style={{ color: "red" }}>{errors.email}</span>}
+
+                          <select style={inputStyle} value={item.gender} onChange={(e) => setAssistants(assistants.map(a => a.id === item.id ? { ...a, gender: e.target.value } : a))}>
                             <option value="">Select Gender</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
                             <option value="Other">Other</option>
                           </select>
-                          <input
-                            style={inputStyle}
-                            type="date"
-                            value={item.dob}
-                            onChange={(e) =>
-                              setAssistants(
-                                assistants.map((a) => (a.id === item.id ? { ...a, dob: e.target.value } : a))
-                              )
-                            }
-                          />
-                          <input
-                            style={inputStyle}
-                            type="text"
-                            value={item.nicOrPassport}
-                            placeholder="NIC/Passport"
-                            onChange={(e) =>
-                              setAssistants(
-                                assistants.map((a) => (a.id === item.id ? { ...a, nicOrPassport: e.target.value } : a))
-                              )
-                            }
-                          />
-                          <input
-                            style={inputStyle}
-                            type="text"
-                            value={item.contactNumber}
-                            placeholder="Contact Number"
-                            onChange={(e) =>
-                              setAssistants(
-                                assistants.map((a) => (a.id === item.id ? { ...a, contactNumber: e.target.value } : a))
-                              )
-                            }
-                          />
-                          <input
-                            style={inputStyle}
-                            type="text"
-                            value={item.address}
-                            placeholder="Address"
-                            onChange={(e) =>
-                              setAssistants(
-                                assistants.map((a) => (a.id === item.id ? { ...a, address: e.target.value } : a))
-                              )
-                            }
-                          />
+                          {errors.gender && <span style={{ color: "red" }}>{errors.gender}</span>}
+
+                          <input style={inputStyle} type="date" value={item.dob} onChange={(e) => setAssistants(assistants.map(a => a.id === item.id ? { ...a, dob: e.target.value } : a))} />
+                          {errors.dob && <span style={{ color: "red" }}>{errors.dob}</span>}
+
+                          <input style={inputStyle} type="text" value={item.nicOrPassport} placeholder="NIC/Passport" maxLength={12} onChange={(e) => setAssistants(assistants.map(a => a.id === item.id ? { ...a, nicOrPassport: e.target.value.slice(0, 12) } : a))} />
+                          {errors.nicOrPassport && <span style={{ color: "red" }}>{errors.nicOrPassport}</span>}
+
+                          <input style={inputStyle} type="text" value={item.contactNumber} placeholder="Contact Number" maxLength={10} onChange={(e) => setAssistants(assistants.map(a => a.id === item.id ? { ...a, contactNumber: e.target.value.replace(/\D/g, "").slice(0, 10) } : a))} />
+                          {errors.contactNumber && <span style={{ color: "red" }}>{errors.contactNumber}</span>}
+
+                          <input style={inputStyle} type="text" value={item.address} placeholder="Address" onChange={(e) => setAssistants(assistants.map(a => a.id === item.id ? { ...a, address: e.target.value } : a))} />
+                          {errors.address && <span style={{ color: "red" }}>{errors.address}</span>}
+
                           <div style={{ marginTop: "0.5rem" }}>
-                            <button
-                              style={{ ...buttonStyle, backgroundColor: "#28a745", marginRight: "0.5rem" }}
-                              onClick={() => saveAssistant(item.id)}
-                            >
-                              Save
-                            </button>
-                            <button
-                              style={{ ...buttonStyle, backgroundColor: "#dc3545" }}
-                              onClick={() => setEditId(null)}
-                            >
-                              Cancel
-                            </button>
+                            <button style={{ ...buttonStyle, backgroundColor: "#28a745", marginRight: "0.5rem" }} onClick={() => saveAssistant(item.id)}>Save</button>
+                            <button style={{ ...buttonStyle, backgroundColor: "#dc3545" }} onClick={() => { setEditId(null); setErrors({}); }}>Cancel</button>
                           </div>
                         </>
                       ) : (
@@ -342,9 +261,7 @@ const ADDASSISTANT = () => {
                           <p><strong>Phone:</strong> {item.contactNumber || "N/A"}</p>
                           <p><strong>Address:</strong> {item.address}</p>
                           <p><strong>Status:</strong> {item.role || "N/A"}</p>
-                          <button style={{ ...buttonStyle, backgroundColor: "#53d726" }} onClick={() => setEditId(item.id)}>
-                            Edit
-                          </button>
+                          <button style={{ ...buttonStyle, backgroundColor: "#53d726" }} onClick={() => setEditId(item.id)}>Edit</button>
                         </>
                       )}
                     </div>
@@ -358,81 +275,38 @@ const ADDASSISTANT = () => {
             {/* Add New Assistant Form */}
             <section style={{ marginTop: "3rem" }}>
               <h3 style={{ marginBottom: "1rem", color: "#181c2e" }}>Add New Assistant</h3>
-              <div
-                style={{
-                  backgroundColor: "white",
-                  padding: "1.5rem",
-                  borderRadius: "12px",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                  maxWidth: "600px",
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "1rem",
-                  borderLeft: `4px solid #199121ff`,
-                }}
-              >
-                <input
-                  style={inputStyle}
-                  type="text"
-                  placeholder="Name"
-                  value={newAssistant.name}
-                  onChange={(e) => setNewAssistant({ ...newAssistant, name: e.target.value })}
-                />
-                <input
-                  style={inputStyle}
-                  type="email"
-                  placeholder="Email"
-                  value={newAssistant.email}
-                  onChange={(e) => setNewAssistant({ ...newAssistant, email: e.target.value })}
-                />
-                <select
-                  style={inputStyle}
-                  value={newAssistant.gender}
-                  onChange={(e) => setNewAssistant({ ...newAssistant, gender: e.target.value })}
-                >
+              <div style={{ backgroundColor: "white", padding: "1.5rem", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.1)", maxWidth: "600px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", borderLeft: `4px solid #199121ff` }}>
+                <input style={inputStyle} type="text" placeholder="Name" value={newAssistant.name} onChange={(e) => setNewAssistant({ ...newAssistant, name: e.target.value })} />
+                {errors.name && <span style={{ color: "red" }}>{errors.name}</span>}
+
+                <input style={inputStyle} type="email" placeholder="Email (lowercase only)" value={newAssistant.email} onChange={(e) => setNewAssistant({ ...newAssistant, email: e.target.value.toLowerCase() })} />
+                {errors.email && <span style={{ color: "red" }}>{errors.email}</span>}
+
+                <select style={inputStyle} value={newAssistant.gender} onChange={(e) => setNewAssistant({ ...newAssistant, gender: e.target.value })}>
                   <option value="">Select Gender</option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
-                  <option value="Other">Other</option>
+                
                 </select>
-                <input
-                  style={inputStyle}
-                  type="date"
-                  value={newAssistant.dob}
-                  onChange={(e) => setNewAssistant({ ...newAssistant, dob: e.target.value })}
-                />
-                <input
-                  style={inputStyle}
-                  type="text"
-                  placeholder="Contact Number"
-                  value={newAssistant.contactNumber}
-                  onChange={(e) => setNewAssistant({ ...newAssistant, contactNumber: e.target.value })}
-                />
-                <input
-                  style={inputStyle}
-                  type="text"
-                  placeholder="NIC/Passport"
-                  value={newAssistant.nicOrPassport}
-                  onChange={(e) => setNewAssistant({ ...newAssistant, nicOrPassport: e.target.value })}
-                />
-                <input
-                  style={inputStyle}
-                  type="text"
-                  placeholder="Address"
-                  value={newAssistant.address}
-                  onChange={(e) => setNewAssistant({ ...newAssistant, address: e.target.value })}
-                />
-                <input
-                  style={inputStyle}
-                  type="password"
-                  placeholder="Password"
-                  value={newAssistant.password}
-                  onChange={(e) => setNewAssistant({ ...newAssistant, password: e.target.value })}
-                />
+                {errors.gender && <span style={{ color: "red" }}>{errors.gender}</span>}
+
+                <input style={inputStyle} type="date" value={newAssistant.dob} onChange={(e) => setNewAssistant({ ...newAssistant, dob: e.target.value })} />
+                {errors.dob && <span style={{ color: "red" }}>{errors.dob}</span>}
+
+                <input style={inputStyle} type="text" placeholder="NIC/Passport" value={newAssistant.nicOrPassport} maxLength={12} onChange={(e) => setNewAssistant({ ...newAssistant, nicOrPassport: e.target.value.slice(0, 12) })} />
+                {errors.nicOrPassport && <span style={{ color: "red" }}>{errors.nicOrPassport}</span>}
+
+                <input style={inputStyle} type="text" placeholder="Contact Number" value={newAssistant.contactNumber} maxLength={10} onChange={(e) => setNewAssistant({ ...newAssistant, contactNumber: e.target.value.replace(/\D/g, "").slice(0, 10) })} />
+                {errors.contactNumber && <span style={{ color: "red" }}>{errors.contactNumber}</span>}
+
+                <input style={inputStyle} type="text" placeholder="Address" value={newAssistant.address} onChange={(e) => setNewAssistant({ ...newAssistant, address: e.target.value })} />
+                {errors.address && <span style={{ color: "red" }}>{errors.address}</span>}
+
+                <input style={inputStyle} type="password" placeholder="Password" maxLength={8} value={newAssistant.password} onChange={(e) => setNewAssistant({ ...newAssistant, password: e.target.value.slice(0, 8) })} />
+                {errors.password && <span style={{ color: "red" }}>{errors.password}</span>}
+
                 <div style={{ gridColumn: "span 2", textAlign: "right" }}>
-                  <button style={{ ...buttonStyle, backgroundColor: "#53d726" }} onClick={addAssistant}>
-                    Add Assistant
-                  </button>
+                  <button style={{ ...buttonStyle, backgroundColor: "#53d726" }} onClick={addAssistant}>Add Assistant</button>
                 </div>
               </div>
             </section>
@@ -443,7 +317,6 @@ const ADDASSISTANT = () => {
   );
 };
 
-// Input and Button styles
 const inputStyle = {
   padding: "10px 12px",
   fontSize: "0.95rem",
