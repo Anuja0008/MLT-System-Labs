@@ -6,77 +6,35 @@ const Chatbot = () => {
     { sender: "bot", text: "Welcome! How can I assist you?" }
   ]);
   const [input, setInput] = useState("");
-  const [isOpen, setIsOpen] = useState(false); // Toggle chatbot
+  const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Predefined questions
-  const predefinedQuestions = [
-    "What are the lab hours?",
-    "What equipment do you have?",
-    "Hello",
-    "Thank you",
-    "Goodbye"
-  ];
-
-  // Function to handle user messages
-  const sendMessage = (messageText) => {
+  // Send message to backend (Gemini AI)
+  const sendMessage = async (messageText) => {
     if (messageText.trim() === "") return;
 
     const userMessage = { sender: "user", text: messageText };
-    setMessages((prevMessages) => [...prevMessages, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
+    setLoading(true);
 
-    // Define basic responses
-    const responses = {
-      hello: [
-        "Hi there! How can I assist you today?",
-        "Hey! How can I help?",
-        "Hello! Need anything? I'm here to assist.",
-        "Hi! How can I make your day easier?"
-      ],
-      "lab hours": [
-        "The lab is open from 8 AM to 8 PM every day.",
-        "Lab hours are from 8 AM until 8 PM.",
-        "We are available from 8 AM to 8 PM. Feel free to drop by!",
-        "You can visit the lab from 8 AM to 8 PM."
-      ],
-      "What equipment do you have?": [
-        "We have microscopes, centrifuges, and spectrometers available for use.",
-       
-      ],
-      "thank you": [
-        "You're welcome! Let me know if you need anything else.",
-        "Anytime! I'm here if you need more help.",
-        "Glad I could help! Feel free to ask if you need more info.",
-        "You're welcome! Have a great day ahead!"
-      ],
-      goodbye: [
-        "Goodbye! Have a wonderful day!",
-        "See you later! Don't hesitate to ask if you need more help.",
-        "Take care! Hope to chat again soon.",
-        "Goodbye! Stay safe and have a great day!"
-      ],
-      default: [
-        "Sorry, I didn't quite understand that. Can you rephrase?",
-        "I'm not sure I got that. Could you ask something else?",
-        "Hmm, I didn't catch that. Could you try again?",
-        "Sorry about that! Could you rephrase your question?"
-      ]
-    };
+    try {
+      const res = await fetch("http://localhost:5000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: messageText }),
+      });
 
-    // Basic matching logic to handle responses
-    let responseText = "I'm not sure about that. Please ask something else.";
+      const data = await res.json();
+      const botMessage = { sender: "bot", text: data.reply };
 
-    // Check for matching responses
-    for (let key in responses) {
-      if (messageText.toLowerCase().includes(key.toLowerCase())) {
-        responseText = responses[key][Math.floor(Math.random() * responses[key].length)];
-        break;
-      }
+      setMessages((prev) => [...prev, botMessage]);
+    } catch (error) {
+      const botMessage = { sender: "bot", text: "⚠️ Error: Could not connect to server." };
+      setMessages((prev) => [...prev, botMessage]);
+    } finally {
+      setLoading(false);
     }
-
-    const botMessage = { sender: "bot", text: responseText };
-
-    setMessages((prevMessages) => [...prevMessages, botMessage]);
   };
 
   return (
@@ -138,37 +96,6 @@ const Chatbot = () => {
             Lab Assistant Chatbot
           </div>
 
-          {/* Predefined Questions */}
-          <div
-            style={{
-              background: "#f8f9fa",
-              padding: "10px",
-              fontSize: "14px",
-              borderBottom: "2px solid #ddd",
-            }}
-          >
-            {predefinedQuestions.map((question, index) => (
-              <button
-                key={index}
-                onClick={() => sendMessage(question)}
-                style={{
-                  display: "block",
-                  background: "#2563eb",
-                  color: "white",
-                  border: "none",
-                  padding: "8px 12px",
-                  marginBottom: "8px",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                  width: "100%",
-                  textAlign: "left",
-                }}
-              >
-                {question}
-              </button>
-            ))}
-          </div>
-
           {/* Chat Messages */}
           <div
             style={{
@@ -201,6 +128,22 @@ const Chatbot = () => {
                 {msg.text}
               </div>
             ))}
+
+            {loading && (
+              <div
+                style={{
+                  padding: "10px 14px",
+                  borderRadius: "18px",
+                  maxWidth: "75%",
+                  background: "#10b981",
+                  color: "white",
+                  alignSelf: "flex-start",
+                  fontSize: "14px",
+                }}
+              >
+                Typing...
+              </div>
+            )}
           </div>
 
           {/* Input & Send Button */}
@@ -218,6 +161,7 @@ const Chatbot = () => {
                 fontSize: "14px",
               }}
               placeholder="Ask about the lab..."
+              onKeyDown={(e) => e.key === "Enter" && sendMessage(input)}
             />
             <button
               onClick={() => sendMessage(input)}
