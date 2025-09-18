@@ -2,119 +2,177 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-  padding: 20px;
+  gap: 30px;
+  padding: 80px 20px 40px 20px; /* Top padding to avoid header overlap */
   font-family: 'Poppins', sans-serif;
-  background-image: url('../../Photos/checkup2.jpg'); /* Replace with your actual image URL */
-  background-size: cover; /* Ensures the image covers the entire container */
-  background-position: center; /* Centers the image */
-  background-repeat: no-repeat; /* Prevents repeating */
-  background-attachment: fixed; /* Keeps the image fixed while content scrolls */
-  min-height: 100vh; /* Ensures it covers the full viewport height */
+  background-image: url('../../Photos/checkup2.jpg'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
   width: 100%;
-  overflow: auto; /* Allows content to scroll while the background stays fixed */
+  overflow: auto;
+  color: #2c3e50;
 }
 
-
+/* Header */
 .header-bar {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 20px;
+  padding: 12px 25px;
   background-color: #539e28;
   color: white;
-  font-size: 10px;
+  font-size: 16px;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
-  border-bottom: 4px solid #b3aeae; 
+  border-bottom: 4px solid #b3aeae;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .header-bar nav {
   display: flex;
-  gap: 10px;
+  gap: 15px;
 }
 
+.nav-button1, .log-button1 {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.nav-button1 {
+  background: linear-gradient(90deg, #FFAC1C, #f7b733);
+}
+
+.nav-button1:hover { background: linear-gradient(90deg, #f7b733, #e69b00); transform: translateY(-3px); }
+.nav-button1:active { transform: translateY(1px); }
+
+.log-button1 {
+  background: linear-gradient(90deg, #eb0b16, #c70010);
+}
+
+.log-button1:hover { background: linear-gradient(90deg, #ff000d, #a5000a); transform: translateY(-3px); }
+.log-button1:active { transform: translateY(1px); }
+
+/* Sections */
 .patient-info, .booking-form, .booking-history {
-  width: 80%;
+  width: 90%;
+  max-width: 800px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 25px 30px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  backdrop-filter: blur(6px);
 }
 
+/* Headings */
+.patient-info h2, .booking-form h3, .booking-history h3 {
+  font-size: 26px;
+  color: #2c3e50;
+  margin-bottom: 15px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+/* Booking form */
 .booking-form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 20px;
-  background: #f9f9f9;
-  border-radius: 8px;
+  gap: 20px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
+  gap: 6px;
 }
 
-/* .submit{
-  background-color: #FFAC1C;
-  color: white;
-  padding: 10px;
-  border: none;
-  cursor: pointer;
+.form-group label {
+  font-weight: 600;
   font-size: 16px;
-} */
+  color: #2c3e50;
+}
 
+.form-group input, .form-group select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus, .form-group select:focus {
+  outline: none;
+  border-color: #539e28;
+  box-shadow: 0 0 8px rgba(83,158,40,0.3);
+}
+
+/* Submit button */
+.submit {
+  padding: 12px 0;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(90deg, #FFAC1C, #f7b733);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit:hover { background: linear-gradient(90deg, #f7b733, #e69b00); transform: translateY(-3px); }
+.submit:active { transform: translateY(1px); }
+
+/* Booking history */
 .booking-history ul {
   list-style: none;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .booking-history li {
-  background: #599e31a9;
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 5px;
-}
-.nav-button1 {
-  background-color: #FFAC1C;
+  padding: 15px 20px;
   border-radius: 8px;
-  padding: 10px 20px; /* Add padding for better size */
-  border: none; /* Ensure no border is applied */
-  font-size: 16px; /* Adjust font size */
-  color: white; /* Text color */
-  cursor: pointer; /* Pointer on hover */
-  transition: all 0.3s ease; /* Smooth transition for all properties */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+  background: rgba(83,158,40,0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
 }
 
-.nav-button1:hover {
-  background-color: #f8a600; /* Darker hover color */
-  transform: translateY(-3px); /* Lift effect on hover */
+.booking-history li:hover {
+  transform: translateY(-3px);
+  background: rgba(83,158,40,0.25);
 }
 
-.nav-button1:active {
-  background-color: #e88900; /* Even darker active color */
-  transform: translateY(1px); /* Slight compression on active click */
-}
-.log-button1 {
-  background-color: #eb0b16;
-  border-radius: 8px;
-  padding: 10px 20px; /* Add padding for better size */
-  border: none; /* Ensure no border is applied */
-  font-size: 16px; /* Adjust font size */
-  color: white; /* Text color */
-  cursor: pointer; /* Pointer on hover */
-  transition: all 0.3s ease; /* Smooth transition for all properties */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+.booking-history button {
+  width: fit-content;
+  align-self: flex-end;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  background: linear-gradient(90deg, #eb0b16, #c70010);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.log-button1:hover {
-  background-color: #ff000d; /* Darker hover color */
-  transform: translateY(-3px); /* Lift effect on hover */
-}
-
-.log-button1:active {
-  background-color: #eb0b16; /* Even darker active color */
-  transform: translateY(1px); /* Slight compression on active click */
+.booking-history button:hover {
+  background: linear-gradient(90deg, #ff000d, #a5000a);
+  transform: translateY(-2px);
 }
