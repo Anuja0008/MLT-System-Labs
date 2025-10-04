@@ -1,128 +1,143 @@
-.idc-container {
-    width: 100%;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: 'Poppins', sans-serif;
-  }
-  
-  .idc-container .title {
-    text-align: center;
-    font-size: 2em;
-    color: #4CAF50;
-    margin-bottom: 30px;
-  }
-  
-  .idc-container .calculation-section {
-    margin-bottom: 40px;
-  }
-  
-  /* .idc-container .input-card,
-  .idc-container .report-card {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-  } */
-  
-  .idc-container h3 {
-    color: #333;
-    font-size: 1.6em;
-    margin-bottom: 15px;
-  }
-  
-  .idc-container .form-group {
-    margin-bottom: 15px;
-  }
-  
-  .idc-container label {
-    font-weight: bold;
-    color: #555;
-    font-size: 1em;
-  }
-  
-  .idc-container input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 1em;
-  }
-  
-  .idc-container input:read-only {
-    background-color: #f4f4f4;
-  }
-  
-  .idc-container button {
-    width: 30%;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.1em;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-bottom: 5px;
-    margin-left: 5px;
-  }
-  
-  .idc-container .green-btn {
-    background-color: #4CAF50;
-    color: white;
+/* Full-page background + overlay */
+.idc-page {
+  min-height: 100vh;
+  padding: 40px 20px;
+  background: url('../../Photos/patient.jpg') no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  position: relative;
+  overflow: auto;
+}
 
-  }
-  
-  .idc-container .green-btn:hover {
-    background-color: #45a049;
-  }
-  
-  .idc-container .blue-btn {
-    background-color: #008CBA;
-    color: white;
-  }
-  
-  .idc-container .blue-btn:hover {
-    background-color: #007bb5;
-  }
-  
-  .idc-container .red-btn {
-    background-color:  #f44336;
-    color: white;
-    margin-bottom: 15px;
-  }
-  
-  .idc-container .red-btn:hover {
-    background-color: #e03e2d;
-  }
-  
-  .idc-container .report-detail {
-    font-size: 1.1em;
-    line-height: 1.6;
-  }
-  
-  .idc-container .report-title {
-    color: #333;
-    font-size: 1.8em;
-    margin-bottom: 20px;
-  }
-  
-  .idc-container .report-section {
-    margin-top: 40px;
-  }
-  
-  .idc-container .report-card {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .idc-container button:focus {
-    outline: none;
-  }
-  .idc-container {
-  position: relative; /* To position the button within this container */
+.idc-page::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Container with frosted effect */
+.idc-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px;
+  font-family: 'Poppins', sans-serif;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure all child elements appear above overlay */
+.idc-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Titles */
+.idc-container .title {
+  text-align: center;
+  font-size: 2em;
+  color: #4CAF50;
+  margin-bottom: 30px;
+}
+
+.idc-container h3 {
+  color: #333;
+  font-size: 1.6em;
+  margin-bottom: 15px;
+}
+
+/* Form & Inputs */
+.idc-container .form-group {
+  margin-bottom: 15px;
+}
+
+.idc-container label {
+  font-weight: bold;
+  color: #555;
+  font-size: 1em;
+}
+
+.idc-container input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+}
+
+.idc-container input:read-only {
+  background-color: #f4f4f4;
+}
+
+/* Buttons */
+.idc-container button {
+  width: 30%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-bottom: 5px;
+  margin-left: 5px;
+}
+
+.idc-container .green-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.idc-container .green-btn:hover {
+  background-color: #45a049;
+}
+
+.idc-container .blue-btn {
+  background-color: #008CBA;
+  color: white;
+}
+
+.idc-container .blue-btn:hover {
+  background-color: #007bb5;
+}
+
+.idc-container .red-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.idc-container .red-btn:hover {
+  background-color: #e03e2d;
+}
+
+.idc-container .go-to-calculation-btn {
+  background-color: #007bb5;
+  color: #fff;
+  width: 30%;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 18px;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.idc-container .go-to-calculation-btn:hover {
+  background-color: #005f8a;
+}
+
+/* Home Button */
+.idc-container {
+  position: relative; /* To position home button absolutely */
 }
 
 .idc-container .home-btn {
@@ -133,26 +148,53 @@
   color: white;
   padding: 10px 20px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   font-size: 1.1em;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-
-
 .idc-container .home-btn:hover {
   background-color: #45a049;
 }
-.go-to-calculation-btn{
-    width: 30%;
-    padding: 12px;
-    background-color: #007bb5;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 18px;
-    margin-top: 10px;
-    transition: background-color 0.3s ease;
-  }
+
+/* Report Section */
+.idc-container .report-section {
+  margin-top: 40px;
+}
+
+.idc-container .report-card {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.idc-container .report-title {
+  color: #333;
+  font-size: 1.8em;
+  margin-bottom: 20px;
+}
+
+.idc-container .report-detail {
+  font-size: 1.1em;
+  line-height: 1.6;
+}
+
+/* Focus states */
+.idc-container button:focus,
+.idc-container input:focus {
+  outline: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .idc-container { padding: 20px; }
+  .idc-container input, .idc-container button { font-size: 14px; }
+}
+
+@media (max-width: 480px) {
+  .idc-container { padding: 15px; }
+  .idc-container input, .idc-container button { font-size: 12px; }
+  .idc-container .report-detail { font-size: 14px; }
+}

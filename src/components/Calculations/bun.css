@@ -1,149 +1,140 @@
-.bun-container {
-    width: 100%;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: 'Poppins', sans-serif;
-  }
-  
-  .bun-container .title {
-    text-align: center;
-    font-size: 2em;
-    color: #4CAF50;
-    margin-bottom: 30px;
-  }
-  
-  .bun-container .calculation-section {
-    margin-bottom: 40px;
-  }
-  
-  .bun-container .input-card,
-  .bun-container .report-card {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-  }
-  
-  .bun-container h3 {
-    color: #333;
-    font-size: 1.6em;
-    margin-bottom: 15px;
-  }
-  
-  .bun-container .form-group {
-    margin-bottom: 15px;
-  }
-  
-  .bun-container label {
-    font-weight: bold;
-    color: #555;
-    font-size: 1em;
-  }
-  
-  .bun-container input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 1em;
-  }
-  
-  .bun-container input:read-only {
-    background-color: #f4f4f4;
-  }
-  
-  .bun-container button {
-    width: 30%;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.1em;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-bottom: 5px;
-    margin-left: 5px;
-  }
-  
-  .bun-container .green-btn {
-    background-color: #4CAF50;
-    color: white;
-
-  }
-  
-  .bun-container .green-btn:hover {
-    background-color: #45a049;
-  }
-  
-  .bun-container .blue-btn {
-    background-color: #008CBA;
-    color: white;
-  }
-  
-  .bun-container .blue-btn:hover {
-    background-color: #007bb5;
-  }
-  
-  .bun-container .red-btn {
-    background-color: #f44336;
-    color: white;
-    margin-bottom: 15px;
-  }
-  
-  .bun-container .red-btn:hover {
-    background-color: #e03e2d;
-  }
-  
-  .bun-container .report-detail {
-    font-size: 1.1em;
-    line-height: 1.6;
-  }
-  
-  .bun-container .report-title {
-    color: #333;
-    font-size: 1.8em;
-    margin-bottom: 20px;
-  }
-  
-  .bun-container .report-section {
-    margin-top: 40px;
-  }
-  
-  .bun-container .report-card {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .bun-container button:focus {
-    outline: none;
-  }
-  .bun-container {
-  position: relative; /* To position the button within this container */
+.bun-page {
+  min-height: 100vh;
+  padding: 40px 20px;
+  background: url('../../Photos/patient.jpg') no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  position: relative;
+  overflow: auto;
 }
 
-.bun-container .home-btn {
+.bun-page::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bun-container {
+  width: 100%;
+  max-width: 900px;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 16px;
+  padding: 30px;
+  z-index: 1;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+  font-family: 'Poppins', sans-serif;
+}
+
+.title {
+  text-align: center;
+  font-size: 2em;
+  color: #10403b;
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+}
+
+.form-group input:read-only {
+  background-color: #f9f9f9;
+}
+
+.btn {
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 1em;
+  margin: 5px;
+  cursor: pointer;
+  border: none;
+  font-weight: 600;
+}
+
+.green-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.green-btn:hover {
+  background-color: #45a049;
+}
+
+.red-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.red-btn:hover {
+  background-color: #e03e2d;
+}
+
+.blue-btn {
+  background-color: #008CBA;
+  color: white;
+}
+
+.blue-btn:hover {
+  background-color: #007bb5;
+}
+
+.report-section {
+  margin-top: 30px;
+}
+
+.report-card {
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+.report-title {
+  font-size: 1.6em;
+  margin-bottom: 20px;
+  color: #10403b;
+}
+
+.home-btn {
   position: absolute;
   top: 20px;
   right: 20px;
-  background-color: #4CAF50;
+  background-color: #10403b;
   color: white;
   padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1em;
   border: none;
-  border-radius: 5px;
-  font-size: 1.1em;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
-.bun-container .home-btn:hover {
-  background-color: #45a049;
+.home-btn:hover {
+  background-color: #2a8a7e;
 }
-.go-to-calculation-btn
-{
-    background-color: #008CBA;
-    color: white;
+
+.go-to-calculation-btn {
+  background-color: #008CBA;
+  color: white;
 }

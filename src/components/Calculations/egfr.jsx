@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { db } from "../../firebase/db"; // Firebase config
+import { db } from "../../firebase/db"; 
 import { collection, query, where, getDocs, setDoc, doc } from "firebase/firestore";
-import './egfr.css'; // Import the external CSS
 import { useNavigate } from "react-router-dom";
+import './egfr.css'; // Make sure your CSS includes the bun-page styles
 
 const EGFR = () => {
   const [patientName, setPatientName] = useState("");
@@ -16,7 +16,6 @@ const EGFR = () => {
 
   const navigate = useNavigate();
 
-  // Fetch patient details and booking date whenever patientEmail changes
   useEffect(() => {
     if (!patientEmail || !patientEmail.includes("@")) return;
 
@@ -30,9 +29,7 @@ const EGFR = () => {
           const userData = querySnapshot.docs[0].data();
           setPatientName(userData.name || "");
           setGender(userData.gender || "");
-          if (userData.dob) {
-            setAge(calculateAge(userData.dob));
-          }
+          if (userData.dob) setAge(calculateAge(userData.dob));
         } else {
           setPatientName("");
           setGender("");
@@ -64,28 +61,23 @@ const EGFR = () => {
     fetchBookingDate(patientEmail);
   }, [patientEmail]);
 
-  // Calculate age from DOB
   const calculateAge = (dob) => {
     const birthDate = new Date(dob);
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) age--;
     return age;
   };
 
-  // Calculate eGFR
   const calculateEGFR = () => {
     if (!patientName || !patientEmail || !bookDate || !age || !creatinine) {
       alert("Please fill all fields");
       return;
     }
 
-    let genderFactor = gender.toLowerCase() === "female" ? 0.742 : 1.0;
-    let eGFRValue =
-      175 * Math.pow(creatinine, -1.154) * Math.pow(age, -0.203) * genderFactor;
+    const genderFactor = gender.toLowerCase() === "female" ? 0.742 : 1.0;
+    let eGFRValue = 175 * Math.pow(creatinine, -1.154) * Math.pow(age, -0.203) * genderFactor;
     eGFRValue = eGFRValue.toFixed(2);
 
     let status = "";
@@ -99,7 +91,6 @@ const EGFR = () => {
     setInterpretation(status);
   };
 
-  // Clear all fields
   const clearFields = () => {
     setPatientName("");
     setPatientEmail("");
@@ -111,21 +102,17 @@ const EGFR = () => {
     setInterpretation("");
   };
 
-  // Print the report
   const printReport = () => window.print();
 
-  // Generate a random 5-digit number
   const generateRandomSuffix = () => Math.floor(10000 + Math.random() * 90000);
 
-  // Upload report to Firestore
   const handleUpload = async () => {
     if (!egfr) {
       alert("Generate the report first before uploading.");
       return;
     }
 
-    const randomSuffix = generateRandomSuffix();
-    const reportId = `${patientEmail}_${randomSuffix}`;
+    const reportId = `${patientEmail}_${generateRandomSuffix()}`;
 
     const reportData = {
       patientName,
@@ -150,49 +137,63 @@ const EGFR = () => {
   };
 
   return (
-    <div className="egfr-container">
-      <h2 className="title">EGFR Report Generator</h2>
-      <h3>Input Patient E-mail & Other Fields Filled Automatically</h3>
+    <div className="bun-page">
+      <div className="bun-container">
+        <h2 className="title">EGFR Report Generator</h2>
+          <h3>Input Patient E-mail & Other Fields Will Be Filled</h3>
 
-      <input
-        className="egfr-input"
-        type="email"
-        placeholder="Patient Email"
-        value={patientEmail}
-        onChange={(e) => setPatientEmail(e.target.value)}
-      />
-      <input className="egfr-input" type="text" placeholder="Patient Name" value={patientName} readOnly />
-      <input className="egfr-input" type="date" value={bookDate} readOnly />
-      <input className="egfr-input" type="number" placeholder="Age" value={age} readOnly />
-      <input className="egfr-input" type="text" placeholder="Gender" value={gender} readOnly />
-      <input
-        className="egfr-input"
-        type="number"
-        placeholder="Creatinine Level (mg/dL)"
-        value={creatinine}
-        onChange={(e) => setCreatinine(e.target.value)}
-      />
-
-      <button className="report-button" onClick={calculateEGFR}>Generate Report</button>
-      <button className="clear-button" onClick={clearFields}>Clear Fields</button>
-      <button className="go-to-calculation-btn" onClick={() => navigate("/Calculation")}>Go to Calculation</button>
-
-      {egfr && (
-        <div className="egfr-report-container">
-          <h3>Patient Medical Report</h3>
-          <p><strong>Name:</strong> {patientName}</p>
-          <p><strong>Email:</strong> {patientEmail}</p>
-          <p><strong>Book Date:</strong> {bookDate}</p>
-          <p><strong>Age:</strong> {age}</p>
-          <p><strong>Gender:</strong> {gender}</p>
-          <p><strong>Creatinine Level:</strong> {creatinine} mg/dL</p>
-          <p><strong>eGFR:</strong> {egfr} mL/min/1.73m²</p>
-          <p><strong>Interpretation:</strong> {interpretation}</p>
-
-          <button className="print-button" onClick={printReport}>Print Report</button>
-          <button className="upload-button" onClick={handleUpload}>Upload Report</button>
+        <div className="form-group">
+          <label>Patient Email</label>
+          <input type="email" value={patientEmail} onChange={e => setPatientEmail(e.target.value)} />
         </div>
-      )}
+        <div className="form-group">
+          <label>Patient Name</label>
+          <input type="text" value={patientName} readOnly />
+        </div>
+        <div className="form-group">
+          <label>Booking Date</label>
+          <input type="date" value={bookDate} readOnly />
+        </div>
+        <div className="form-group">
+          <label>Age</label>
+          <input type="number" value={age} readOnly />
+        </div>
+        <div className="form-group">
+          <label>Gender</label>
+          <input type="text" value={gender} readOnly />
+        </div>
+          <h3>EGFR Calculation</h3>
+        <div className="form-group">
+          <label>Creatinine Level (mg/dL)</label>
+          <input type="number" value={creatinine} onChange={e => setCreatinine(e.target.value)} />
+        </div>
+
+        <div style={{ marginTop: '10px' }}>
+          <button className="green-btn btn" onClick={calculateEGFR}>Generate Report</button>
+          <button className="red-btn btn" onClick={clearFields}>Clear Fields</button>
+          <button className="blue-btn btn go-to-calculation-btn" onClick={() => navigate("/Calculation")}>Go to Calculation</button>
+        </div>
+
+        {egfr && (
+          <div className="report-section">
+            <div className="report-card">
+              <h3 className="report-title">Patient Medical Report</h3>
+              <p><strong>Name:</strong> {patientName}</p>
+              <p><strong>Email:</strong> {patientEmail}</p>
+              <p><strong>Booking Date:</strong> {bookDate}</p>
+              <p><strong>Age:</strong> {age}</p>
+              <p><strong>Gender:</strong> {gender}</p>
+              <p><strong>Creatinine Level:</strong> {creatinine} mg/dL</p>
+              <p><strong>eGFR:</strong> {egfr} mL/min/1.73m²</p>
+              <p><strong>Interpretation:</strong> {interpretation}</p>
+              <div>
+                <button className="green-btn btn" onClick={printReport}>Print Report</button>
+                <button className="green-btn btn" onClick={handleUpload}>Upload Report</button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

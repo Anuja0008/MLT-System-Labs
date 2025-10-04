@@ -218,7 +218,7 @@ const Appointments = () => {
           {["patientEmail", "patientFullName", "date"].map((id) => (
             <div key={id} style={{ marginBottom: "15px" }}>
               <label htmlFor={id} style={{ display: "block", marginBottom: "6px", fontWeight: "bold", color: "#2c3e50" }}>
-                {id === "patientEmail" ? "Patient Email" : id === "patientFullName" ? "Patient Full Name" : "Date"}
+                {id === "patientEmail" ? "Patient Email" : id === "patientFullName" ? "Patient Full Name" : "Date Of Birth"}
               </label>
               <input
                 type={id === "date" ? "date" : "text"}

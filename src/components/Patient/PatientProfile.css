@@ -1,11 +1,12 @@
+/* Container with liquid glass effect */
 .patient-profile-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
-  padding: 80px 20px 40px 20px; /* Top padding to avoid header overlap */
+  gap: 40px;
+  padding: 100px 20px 50px 20px; /* More top padding for fixed header */
   font-family: 'Poppins', sans-serif;
-  background-image: url('../../Photos/checkup2.jpg'); 
+  background-image: url('../../Photos/patient.jpg'); 
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -13,7 +14,18 @@
   min-height: 100vh;
   width: 100%;
   overflow: auto;
-  color: #2c3e50;
+  color: #1c2a35; /* Darker text for contrast */
+  position: relative;
+  z-index: 1;
+}
+
+.patient-profile-container::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.25); /* Dark overlay for contrast */
+  z-index: 0;
+  pointer-events: none;
 }
 
 /* Header */
@@ -22,157 +34,279 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 25px;
-  background-color: #539e28;
-  color: white;
-  font-size: 16px;
+  padding: 16px 30px;
+  background-color: #2a8a7e; /* Softer teal */
+  color: #fff;
+  font-size: 17px;
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  border-bottom: 4px solid #b3aeae;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  top: 0; left: 0; right: 0;
+  z-index: 1100;
+  border-bottom: 4px solid #1f6f66;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+  font-weight: 600;
 }
 
 .header-bar nav {
   display: flex;
-  gap: 15px;
+  gap: 18px;
 }
 
+/* Patient info in header */
+.patient-info-header {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  user-select: none;
+  min-width: 180px;
+  gap: 4px;
+}
+
+.patient-info-header p {
+  margin: 0;
+  white-space: nowrap;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+/* Buttons */
 .nav-button1, .log-button1 {
-  padding: 12px 25px;
+  padding: 12px 30px;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 16px;
   color: white;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  user-select: none;
+  outline-offset: 3px;
 }
 
 .nav-button1 {
   background: linear-gradient(90deg, #FFAC1C, #f7b733);
+  box-shadow: 0 6px 20px rgba(255, 172, 28, 0.5);
+  opacity: 80%;
 }
 
-.nav-button1:hover { background: linear-gradient(90deg, #f7b733, #e69b00); transform: translateY(-3px); }
-.nav-button1:active { transform: translateY(1px); }
+.nav-button1:hover {
+  background: linear-gradient(90deg, #f7b733, #e69b00);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(230, 155, 0, 0.6);
+  opacity: 80%;
+}
+
+.nav-button1:active {
+  transform: translateY(1px);
+}
 
 .log-button1 {
-  background: linear-gradient(90deg, #eb0b16, #c70010);
+  background: linear-gradient(90deg, #eb0b16cf, #c70010);
+  box-shadow: 0 6px 20px rgba(235, 11, 22, 0.6);
+  opacity: 80%;
 }
 
-.log-button1:hover { background: linear-gradient(90deg, #ff000d, #a5000a); transform: translateY(-3px); }
-.log-button1:active { transform: translateY(1px); }
+.log-button1:hover {
+  background: linear-gradient(90deg, #ff000d, #a5000a);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(255, 0, 13, 0.7);
+}
 
-/* Sections */
+.log-button1:active {
+  transform: translateY(1px);
+}
+
+/* Glassmorphism containers */
 .patient-info, .booking-form, .booking-history {
   width: 90%;
   max-width: 800px;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 12px;
-  padding: 25px 30px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-  backdrop-filter: blur(6px);
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: 30px 40px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  color: #1c2a35;
+  position: relative;
+  transition: box-shadow 0.3s ease;
+}
+
+.patient-info:hover, .booking-form:hover, .booking-history:hover {
+  box-shadow: 0 12px 40px rgba(31, 38, 135, 0.25);
 }
 
 /* Headings */
 .patient-info h2, .booking-form h3, .booking-history h3 {
-  font-size: 26px;
-  color: #2c3e50;
-  margin-bottom: 15px;
+  font-size: 28px;
+  color: #10403b;
+  margin-bottom: 20px;
   text-align: center;
-  letter-spacing: 1px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  text-shadow: 1px 1px 3px rgba(255,255,255,0.6);
+}
+
+/* Flex container for form + history side by side */
+.main-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  width: 100%;
+  max-width: 1200px;
 }
 
 /* Booking form */
 .booking-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
+  flex: 2; /* Takes more space */
 }
 
+/* Booking history */
+.booking-history {
+  flex: 1; /* Smaller than form */
+  max-width: 400px;
+  overflow-y: auto;
+  max-height: 600px;
+  background: rgba(255, 255, 255, 0.18);
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(31, 38, 135, 0.25);
+}
+
+/* Form groups */
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  font-weight: 600;
+  color: #10403b;
+  font-size: 17px;
+  letter-spacing: 0.03em;
 }
 
 .form-group label {
-  font-weight: 600;
-  font-size: 16px;
-  color: #2c3e50;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.form-group input, .form-group select {
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="date"],
+.form-group select {
+  border-radius: 12px;
+  padding: 10px 18px;
+  border: 1.5px solid rgba(16, 64, 59, 0.25);
+  background: rgba(255, 255, 255, 0.6);
   font-size: 15px;
-  transition: all 0.3s ease;
+  outline-offset: 2px;
+  transition: border-color 0.3s ease;
+  font-family: 'Poppins', sans-serif;
 }
 
-.form-group input:focus, .form-group select:focus {
-  outline: none;
-  border-color: #539e28;
-  box-shadow: 0 0 8px rgba(83,158,40,0.3);
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #1c2a35;
+  box-shadow: 0 0 8px #1c2a35aa;
 }
 
 /* Submit button */
-.submit {
-  padding: 12px 0;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  color: white;
-  background: linear-gradient(90deg, #FFAC1C, #f7b733);
+button.submit {
   cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  font-size: 19px;
+  padding: 14px 0;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #2A8A7E, #10403B);
+  color: white;
+  box-shadow: 0 6px 18px rgba(16, 64, 59, 0.5);
   transition: all 0.3s ease;
 }
 
-.submit:hover { background: linear-gradient(90deg, #f7b733, #e69b00); transform: translateY(-3px); }
-.submit:active { transform: translateY(1px); }
+button.submit:hover {
+  background: linear-gradient(90deg, #10403B, #2A8A7E);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(16, 64, 59, 0.75);
+}
 
-/* Booking history */
+button.submit:active {
+  transform: translateY(1px);
+}
+
+/* Booking history list */
 .booking-history ul {
   list-style: none;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  margin: 0;
 }
 
 .booking-history li {
-  padding: 15px 20px;
-  border-radius: 8px;
-  background: rgba(83,158,40,0.15);
+  border-bottom: 1px solid rgba(16, 64, 59, 0.2);
+  padding: 12px 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #10403b;
+  font-weight: 600;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
+  gap: 4px;
 }
 
-.booking-history li:hover {
-  transform: translateY(-3px);
-  background: rgba(83,158,40,0.25);
+.booking-history li p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .booking-history button {
-  width: fit-content;
-  align-self: flex-end;
-  padding: 6px 12px;
+  align-self: flex-start;
+  margin-top: 6px;
+  background: #c0392b;
   border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  background: linear-gradient(90deg, #eb0b16, #c70010);
+  padding: 6px 12px;
   color: white;
+  border-radius: 10px;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  font-size: 14px;
+  box-shadow: 0 3px 10px rgba(192, 57, 43, 0.6);
+  transition: background 0.3s ease;
 }
 
 .booking-history button:hover {
-  background: linear-gradient(90deg, #ff000d, #a5000a);
-  transform: translateY(-2px);
+  background: #e74c3c;
+}
+
+.booking-history button:active {
+  transform: translateY(1px);
+}
+
+/* Scrollbar for booking history */
+.booking-history::-webkit-scrollbar {
+  width: 8px;
+}
+
+.booking-history::-webkit-scrollbar-thumb {
+  background-color: #2a8a7e;
+  border-radius: 10px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .main-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .booking-history, .booking-form {
+    max-width: 100%;
+    width: 100%;
+  }
 }

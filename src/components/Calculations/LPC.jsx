@@ -11,12 +11,10 @@ const LPC = () => {
   const [age, setAge] = useState("");
   const [lpcValue, setLpcValue] = useState("");
   const [lpcStatus, setLpcStatus] = useState("");
-  const [lipidResult, setLipidResult] = useState(null);
-
-  // Lipid Profile Inputs
-  const [tc, setTc] = useState(""); // Total Cholesterol
-  const [hdl, setHdl] = useState(""); // HDL
-  const [tg, setTg] = useState("");  // Triglycerides
+  const [lipidResult, setLipidResult] = useState([]);
+  const [tc, setTc] = useState("");
+  const [hdl, setHdl] = useState("");
+  const [tg, setTg] = useState("");
 
   const navigate = useNavigate();
 
@@ -49,10 +47,8 @@ const LPC = () => {
     const birthDate = new Date(dob);
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDifference = today.getMonth() - birthDate.getMonth();
-    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) age--;
     return age;
   };
 
@@ -60,31 +56,49 @@ const LPC = () => {
     const totalCholesterol = parseFloat(tc);
     const hdlValue = parseFloat(hdl);
     const triglycerides = parseFloat(tg);
-    
-    if (isNaN(totalCholesterol) || isNaN(hdlValue) || isNaN(triglycerides) || totalCholesterol <= 0 || hdlValue <= 0 || triglycerides <= 0) {
-      setLipidResult("Please enter valid numbers for Total Cholesterol, HDL, and Triglycerides.");
+
+    if (
+      isNaN(totalCholesterol) ||
+      isNaN(hdlValue) ||
+      isNaN(triglycerides) ||
+      totalCholesterol <= 0 ||
+      hdlValue <= 0 ||
+      triglycerides <= 0
+    ) {
+      setLipidResult(["Please enter valid numbers for Total Cholesterol, HDL, and Triglycerides."]);
       return;
     }
 
-    const ldl = (totalCholesterol - hdlValue - (triglycerides / 5)).toFixed(2);
+    const ldl = (totalCholesterol - hdlValue - triglycerides / 5).toFixed(2);
     let statusMessage = "";
     let adviceMessage = "";
 
     if (totalCholesterol < 200 && hdlValue > 60 && ldl < 100 && triglycerides < 150) {
-      statusMessage = "good";
-      adviceMessage = "Your lipid profile is within the healthy range. Maintain a balanced diet and regular exercise.";
+      statusMessage = "GOOD";
+      adviceMessage = "Your lipid profile is within the healthy range.";
     } else {
-      statusMessage = "bad";
-      adviceMessage = "Your lipid profile indicates potential health risks. Please consult your doctor for further evaluation.";
+      statusMessage = "BAD";
+      adviceMessage =
+        "Your lipid profile indicates potential health risks. Please consult your doctor for further evaluation.";
     }
 
-    setLipidResult(`LDL: ${ldl} mg/dL\nTotal Cholesterol: ${totalCholesterol} mg/dL\nHDL: ${hdlValue} mg/dL\nTriglycerides: ${triglycerides} mg/dL\n\nResult: ${statusMessage.toUpperCase()}\n\n${adviceMessage}`);
-    setLpcStatus(statusMessage);
+    // Point-wise result array
+    const resultPoints = [
+      `LDL: ${ldl} mg/dL`,
+      `Total Cholesterol: ${totalCholesterol} mg/dL`,
+      `HDL: ${hdlValue} mg/dL`,
+      `Triglycerides: ${triglycerides} mg/dL`,
+      `Result: ${statusMessage}`,
+      `${adviceMessage}`,
+    ];
+
+    setLipidResult(resultPoints);
+    setLpcStatus(statusMessage.toLowerCase());
   };
 
   const uploadReport = async () => {
     try {
-      if (!lipidResult) {
+      if (!lipidResult.length) {
         alert("Please calculate the lipid profile before uploading the report.");
         return;
       }
@@ -97,21 +111,19 @@ const LPC = () => {
         age,
         lpcValue,
         lipidResult,
-        lpcStatus, // Save final status (Good/Bad)
+        lpcStatus,
         timestamp: new Date().toISOString(),
       };
 
       await setDoc(doc(db, "Reports", new Date().getTime().toString()), reportData);
       alert("Report uploaded successfully!");
     } catch (error) {
-      console.error("Error uploading report: ", error);
+      console.error(error);
       alert("Failed to upload report.");
     }
   };
 
-  const printReport = () => {
-    window.print();
-  };
+  const printReport = () => window.print();
 
   const clearFields = () => {
     setPatientEmail("");
@@ -123,64 +135,84 @@ const LPC = () => {
     setTc("");
     setHdl("");
     setTg("");
-    setLipidResult(null);
+    setLipidResult([]);
   };
 
   return (
-    <div className="lpc-Container">
-      <h2 className="title">LPC Calculation</h2>
+    <div className="lpc-page">
+      <div className="lpc-Container">
+        <h2 className="title">LPC Calculation</h2>
 
-      <div className="calculation-section">
-        <h3>Input Patient Email & Other Fields Will Auto-Fill</h3>
-        <div className="form-container">
+        <div className="calculation-section">
+          <h3>Input Patient Email & Auto-Fill Fields</h3>
           <div className="form-group">
-            <label className="label">Patient Email:</label>
-            <input type="email" className="input" value={patientEmail} onChange={(e) => setPatientEmail(e.target.value)} onBlur={fetchPatientDetails} />
+            <label>Patient Email:</label>
+            <input
+              type="email"
+              value={patientEmail}
+              onChange={(e) => setPatientEmail(e.target.value)}
+              onBlur={fetchPatientDetails}
+            />
           </div>
           <div className="form-group">
-            <label className="label">Patient Name:</label>
-            <input type="text" className="input" value={patientName} readOnly />
+            <label>Patient Name:</label>
+            <input type="text" value={patientName} readOnly />
           </div>
           <div className="form-group">
-            <label className="label">Book Date:</label>
-            <input type="date" className="input" value={bookDate} readOnly />
+            <label>Book Date:</label>
+            <input type="date" value={bookDate} readOnly />
           </div>
           <div className="form-group">
-            <label className="label">Age:</label>
-            <input type="text" className="input" value={age} readOnly />
+            <label>Age:</label>
+            <input type="text" value={age} readOnly />
           </div>
 
           <h3>Lipid Profile Calculation</h3>
           <div className="form-group">
-            <label className="label">LPC Value:</label>
-            <input type="number" className="input" value={lpcValue} onChange={(e) => setLpcValue(e.target.value)} />
+            <label>LPC Value:</label>
+            <input type="number" value={lpcValue} onChange={(e) => setLpcValue(e.target.value)} />
           </div>
           <div className="form-group">
-            <label className="label">Total Cholesterol:</label>
-            <input type="number" className="input" value={tc} onChange={(e) => setTc(e.target.value)} />
+            <label>Total Cholesterol:</label>
+            <input type="number" value={tc} onChange={(e) => setTc(e.target.value)} />
           </div>
           <div className="form-group">
-            <label className="label">HDL:</label>
-            <input type="number" className="input" value={hdl} onChange={(e) => setHdl(e.target.value)} />
+            <label>HDL:</label>
+            <input type="number" value={hdl} onChange={(e) => setHdl(e.target.value)} />
           </div>
           <div className="form-group">
-            <label className="label">Triglycerides:</label>
-            <input type="number" className="input" value={tg} onChange={(e) => setTg(e.target.value)} />
+            <label>Triglycerides:</label>
+            <input type="number" value={tg} onChange={(e) => setTg(e.target.value)} />
           </div>
-          <button onClick={calculateLipidProfile} className="btn green-btn">Calculate Lipid Profile</button>
-          <button onClick={clearFields} className="btn red-btn">Clear Fields</button>
-          <button className="go-to-calculation-btn" onClick={() => navigate("/Calculation")}>Go to Calculation</button>
-        </div>
-      </div>
 
-      {lipidResult && (
-        <div className={`result-section ${lpcStatus}`}>
-          <h3 className="result-title">Lipid Profile Result</h3>
-          <p>{lipidResult}</p>
-          <button className="print-button" onClick={printReport}>Print Report</button>
-          <button onClick={uploadReport} className="btn blue-btn">Upload Report</button>
+          <button onClick={calculateLipidProfile} className="btn green-btn">
+            Calculate Lipid Profile
+          </button>
+          <button onClick={clearFields} className="btn red-btn">
+            Clear Fields
+          </button>
+          <button className="go-to-calculation-btn" onClick={() => navigate("/Calculation")}>
+            Go to Calculation
+          </button>
         </div>
-      )}
+
+        {lipidResult.length > 0 && (
+          <div className={`result-section ${lpcStatus}`}>
+            <h3 className="result-title">Lipid Profile Result</h3>
+            <ul>
+              {lipidResult.map((point, index) => (
+                <li key={index}>{point}</li>
+              ))}
+            </ul>
+            <button className="print-button" onClick={printReport}>
+              Print Report
+            </button>
+            <button onClick={uploadReport} className="btn blue-btn">
+              Upload Report
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -26,7 +26,9 @@ const PatientProfile = () => {
 
   const [bookingHistory, setBookingHistory] = useState([]);
 
-  useEffect(() => { if (!user) navigate('/login'); }, [user, navigate]);
+  useEffect(() => {
+    if (!user) navigate('/login');
+  }, [user, navigate]);
 
   useEffect(() => {
     const fetchBookingHistory = async () => {
@@ -69,7 +71,7 @@ const PatientProfile = () => {
       const oldBookingsQuery = query(bookingsRef, where('patientName', '==', user.email));
       const snapshot = await getDocs(oldBookingsQuery);
 
-      const movePromises = snapshot.docs.map(doc => 
+      const movePromises = snapshot.docs.map(doc =>
         addDoc(historyRef, { ...doc.data(), timestamp: new Date() })
       );
       await Promise.all(movePromises);
@@ -134,63 +136,68 @@ const PatientProfile = () => {
   return (
     <div className="patient-profile-container">
       <header className="header-bar">
-        <h1>Patient Portal</h1>
+        <div className="patient-info-header">
+          <p>👤 {formData.patientFullName}</p>
+          <p>({user?.role})</p>
+        </div>
         <nav>
           <button onClick={handleCheckResults} className="nav-button1">Check Results</button>
-          <button onClick={() => { localStorage.removeItem("user"); navigate('/login'); }} className="log-button1">
+          <button
+            onClick={() => {
+              localStorage.removeItem("user");
+              navigate('/login');
+            }}
+            className="log-button1"
+          >
             Logout
           </button>
         </nav>
       </header>
 
-      <section className="patient-info">
-        <h2>👤 Patient Profile</h2>
-        <p><strong>Name:</strong> {formData.patientFullName}</p>
-        <p><strong>Role:</strong> {user?.role}</p>
-      </section>
+      <main className="main-content">
+        <form onSubmit={handleSubmit} className="booking-form">
+          <h3>📌 Book a Test</h3>
+          <div className="form-group">
+            <label><FaUser /> Full Name</label>
+            <input type="text" name="patientFullName" value={formData.patientFullName} onChange={handleChange} required />
+          </div>
+          <div className="form-group">
+            <label><FaEnvelope /> Email</label>
+            <input type="email" name="patientName" value={formData.patientName} readOnly />
+          </div>
+          <div className="form-group">
+            <label><FaFlask /> Test Type</label>
+            <select name="testType" value={formData.testType} onChange={handleChange} required>
+              <option value="">Select Test</option>
+              {Object.keys(testIcons).map((test) => (
+                <option key={test} value={test}>{test}</option>
+              ))}
+            </select>
+          </div>
+          <div className="form-group">
+            <label><FaCalendarAlt /> Date</label>
+            <input type="date" name="date" value={formData.date} onChange={handleChange} required />
+          </div>
 
-      <form onSubmit={handleSubmit} className="booking-form">
-        <h3>📌 Book a Test</h3>
-        <div className="form-group">
-          <label><FaUser /> Full Name</label>
-          <input type="text" name="patientFullName" value={formData.patientFullName} onChange={handleChange} required />
-        </div>
-        <div className="form-group">
-          <label><FaEnvelope /> Email</label>
-          <input type="email" name="patientName" value={formData.patientName} readOnly />
-        </div>
-        <div className="form-group">
-          <label><FaFlask /> Test Type</label>
-          <select name="testType" value={formData.testType} onChange={handleChange} required>
-            <option value="">Select Test</option>
-            {Object.keys(testIcons).map((test) => (
-              <option key={test} value={test}>{test}</option>
-            ))}
-          </select>
-        </div>
-        <div className="form-group">
-          <label><FaCalendarAlt /> Date</label>
-          <input type="date" name="date" value={formData.date} onChange={handleChange} required />
-        </div>
+          <button type="submit" className="submit">📅 Book Now</button>
+        </form>
 
-        <button type="submit" className="submit">📅 Book Now</button>
-      </form>
-
-      <section className="booking-history">
-        <h3>🕒 Booking History</h3>
-        {bookingHistory.length > 0 ? (
-          <ul>
-            {bookingHistory.map((booking) => (
-              <li key={booking.id}>
-                <p>{testIcons[booking.testType]}<strong>{booking.testType}</strong></p>
-                <p>Patient: {booking.patientFullName}</p>
-                <p>Date: {new Date(booking.date).toLocaleDateString()}</p>
-                <button onClick={() => handleDeleteHistory(booking.id)}>Delete</button>
-              </li>
-            ))}
-          </ul>
-        ) : <p>No bookings yet.</p>}
-      </section>
+        <section className="booking-history">
+          <h3>🕒 Booking History</h3>
+          {bookingHistory.length > 0 ? (
+            <ul>
+              {bookingHistory.map((booking) => (
+                <li key={booking.id}>
+                  <p>{testIcons[booking.testType]}<strong>{booking.testType}</strong></p>
+                  <p>Patient: {booking.patientFullName}</p>
+                  <p>Date: {new Date(booking.date).toLocaleDateString()}</p>
+                  <button onClick={() => handleDeleteHistory(booking.id)}>Delete</button>
+                </li>
+              ))}
+            </ul>
+          ) : <p>No bookings yet.</p>}
+        </section>
+      </main>
     </div>
   );
 };

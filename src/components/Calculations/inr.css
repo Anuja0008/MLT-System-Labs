@@ -155,3 +155,39 @@
 .inr-Container .print-button:hover {
     background-color: #007bb5;
   }
+  /* Full-page background + overlay */
+.inr-page {
+  min-height: 100vh;
+  padding: 40px 20px;
+  background: url('../../Photos/patient.jpg') no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  position: relative;
+  overflow: auto;
+}
+
+.inr-page::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Make container appear above overlay */
+.inr-Container {
+  position: relative;
+  z-index: 1;
+  background-color: rgba(255, 255, 255, 0.85); /* frosted glass */
+  border-radius: 16px;
+  padding: 30px;
+  max-width: 900px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+  font-family: 'Poppins', sans-serif;
+}

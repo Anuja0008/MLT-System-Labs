@@ -1,18 +1,28 @@
+// src/pages/BUN.jsx
 import React, { useState } from "react";
 import { db } from "../../firebase/db";
-import { collection, query, where, getDocs, /*addDoc*/ setDoc, doc } from "firebase/firestore"; // Import setDoc and doc
-import "./bun.css"; // Importing external CSS
-import { useNavigate } from 'react-router-dom';
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  setDoc,
+  doc,
+} from "firebase/firestore";
+import "./bun.css";
+import { useNavigate } from "react-router-dom";
 
 const BUN = () => {
   const [patientEmail, setPatientEmail] = useState("");
   const [patientName, setPatientName] = useState("");
   const [bookDate, setBookDate] = useState("");
-  const [/*dob*/, setDob] = useState("");
+  const [dob, setDob] = useState("");
   const [age, setAge] = useState("");
   const [bun, setBun] = useState("");
   const [creatinine, setCreatinine] = useState("");
   const [report, setReport] = useState(null);
+
+  const navigate = useNavigate();
 
   const fetchPatientDetails = async () => {
     try {
@@ -38,8 +48,8 @@ const BUN = () => {
         setPatientName(userDoc.name);
         setDob(userDoc.dob);
 
-        const age = calculateAge(userDoc.dob);
-        setAge(age);
+        const calculatedAge = calculateAge(userDoc.dob);
+        setAge(calculatedAge);
       } else {
         alert("No user data found for this email.");
       }
@@ -47,14 +57,13 @@ const BUN = () => {
       console.error("Error fetching data: ", error);
     }
   };
-  const navigate = useNavigate();
 
   const calculateAge = (dob) => {
     const birthDate = new Date(dob);
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDifference = today.getMonth() - birthDate.getMonth();
-    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
     return age;
@@ -75,15 +84,16 @@ const BUN = () => {
     }
 
     const bunStatus = bunValue >= 7 && bunValue <= 20 ? "Normal (7-20 mg/dL)" : "Abnormal";
-    const creatinineStatus = creatinineValue >= 0.6 && creatinineValue <= 1.3 ? "Normal (0.6-1.3 mg/dL)" : "Abnormal";
+    const creatinineStatus =
+      creatinineValue >= 0.6 && creatinineValue <= 1.3 ? "Normal (0.6-1.3 mg/dL)" : "Abnormal";
 
     const overallResult =
-      bunStatus === "Normal (7-20 mg/dL)" && creatinineStatus === "Normal (0.6-1.3 mg/dL)"
+      bunStatus.includes("Normal") && creatinineStatus.includes("Normal")
         ? "Normal"
         : "Needs Attention";
 
     const requestDate = new Date().toLocaleDateString();
-    const testType = "Blood Urea Nitrogen ";
+    const testType = "Blood Urea Nitrogen";
 
     setReport({
       patientName,
@@ -103,28 +113,12 @@ const BUN = () => {
   };
 
   const uploadReport = async () => {
+    if (!report) return;
     try {
-      const reportData = {
-        patientName,
-        patientEmail,
-        bun: report.bun,
-        bunStatus: report.bunStatus,
-        creatinine: report.creatinine,
-        creatinineStatus: report.creatinineStatus,
-        bunCreatinineRatio: report.bunCreatinineRatio,
-        interpretation: report.interpretation,
-        overallResult: report.overallResult,
-        requestDate: report.requestDate,
-        testType: report.testType,
-        bookDate: report.bookDate,
-        age: report.age,
-      };
-
-      // Use setDoc to upload the report with the patient's email as the document ID
-      await setDoc(doc(db, "Reports", patientEmail), reportData);
+      await setDoc(doc(db, "Reports", patientEmail), report);
       alert("Report uploaded successfully!");
     } catch (error) {
-      console.error("Error uploading report: ", error);
+      console.error("Upload failed:", error);
       alert("Failed to upload report.");
     }
   };
@@ -141,97 +135,79 @@ const BUN = () => {
   };
 
   return (
-    <div className="bun-container">
-      <h2 className="title">Blood Urea Nitrogen Report Generator</h2>
+    <div className="bun-page">
+      <div className="bun-container">
+        {/* <button className="home-btn" onClick={() => navigate("/")}>Home</button> */}
+        <h2 className="title">Blood Urea Nitrogen Report Generator</h2>
 
-      <div className="calculation-section">
-        <h3>Input Patient E-mail & Other Field Filled Automatically</h3>
-        <div className="form-container">
-          <div className="form-group">
-            <label className="label">Patient Email:</label>
-            <input
-              type="email"
-              className="input"
-              value={patientEmail}
-              onChange={(e) => setPatientEmail(e.target.value)}
-              onBlur={fetchPatientDetails}
-            />
+        <div className="calculation-section">
+          <h3>Input Patient E-mail & Other Fields Will Be Filled</h3>
+          <div className="form-container">
+            <div className="form-group">
+              <label>Patient Email:</label>
+              <input
+                type="email"
+                value={patientEmail}
+                onChange={(e) => setPatientEmail(e.target.value)}
+                onBlur={fetchPatientDetails}
+              />
+            </div>
+            <div className="form-group">
+              <label>Patient Name:</label>
+              <input type="text" value={patientName} readOnly />
+            </div>
+            <div className="form-group">
+              <label>Book Date:</label>
+              <input type="date" value={bookDate} readOnly />
+            </div>
+            <div className="form-group">
+              <label>Age:</label>
+              <input type="text" value={age} readOnly />
+            </div>
+              <h3>BUN Calculation</h3>
+            <div className="form-group">
+              <label>BUN Level (mg/dL):</label>
+              <input type="number" value={bun} onChange={(e) => setBun(e.target.value)} />
+            </div>
+            <div className="form-group">
+              <label>Creatinine Level (mg/dL):</label>
+              <input
+                type="number"
+                value={creatinine}
+                onChange={(e) => setCreatinine(e.target.value)}
+              />
+            </div>
+            <button onClick={generateReport} className="btn green-btn">Generate Report</button>
+            <button onClick={clearFields} className="btn red-btn">Clear Fields</button>
+            <button className="go-to-calculation-btn" onClick={() => navigate("/Calculation")}>
+              Go to Calculation
+            </button>
           </div>
-          <div className="form-group">
-            <label className="label">Patient Name:</label>
-            <input
-              type="text"
-              className="input"
-              value={patientName}
-              readOnly
-            />
-          </div>
-          <div className="form-group">
-            <label className="label">Book Date:</label>
-            <input
-              type="date"
-              className="input"
-              value={bookDate}
-              readOnly
-            />
-          </div>
-          <div className="form-group">
-            <label className="label">Age:</label>
-            <input
-              type="text"
-              className="input"
-              value={age}
-              readOnly
-            />
-          </div>
-          <div className="form-group">
-            <label className="label">BUN Level (mg/dL):</label>
-            <input
-              type="number"
-              className="input"
-              value={bun}
-              onChange={(e) => setBun(e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label className="label">Creatinine Level (mg/dL):</label>
-            <input
-              type="number"
-              className="input"
-              value={creatinine}
-              onChange={(e) => setCreatinine(e.target.value)}
-            />
-          </div>
-          <button onClick={generateReport} className="btn green-btn">Generate Report</button>
-          <button onClick={clearFields} className="btn red-btn">Clear Fields</button>
-          <button className="go-to-calculation-btn" onClick={() => navigate("/Calculation")}>
-            Go to Calculation
-          </button>
         </div>
+
+        {report && (
+          <div className="report-section">
+            <h3 className="report-title">Generated Medical Report</h3>
+            <div className="report-card">
+              <p><strong>Test Type:</strong> {report.testType}</p>
+              <p><strong>Request Date:</strong> {report.requestDate}</p>
+              <p><strong>Book Date:</strong> {report.bookDate}</p>
+              <p><strong>Patient Name:</strong> {report.patientName}</p>
+              <p><strong>Patient Email:</strong> {report.patientEmail}</p>
+              <p><strong>Age:</strong> {report.age}</p>
+              <p><strong>BUN:</strong> {report.bun} ({report.bunStatus})</p>
+              <p><strong>Creatinine:</strong> {report.creatinine} ({report.creatinineStatus})</p>
+              <p><strong>Ratio:</strong> {report.bunCreatinineRatio}</p>
+              <p><strong>Interpretation:</strong> {report.interpretation}</p>
+              <p className="overall-result"><strong>Overall:</strong> {report.overallResult}</p>
+              <button onClick={() => window.print()} className="btn blue-btn">Print</button>
+              <button onClick={uploadReport} className="btn blue-btn">Upload</button>
+            </div>
+          </div>
+        )}
       </div>
-
-      {report && (
-        <div className="report-section">
-          <h3 className="report-title">Generated Medical Report</h3>
-          <div className="report-container">
-            <p><strong>Test Type:</strong> {report.testType}</p>
-            <p><strong>Request Date:</strong> {report.requestDate}</p>
-            <p><strong>Book Date:</strong> {report.bookDate}</p>
-            <p><strong>Patient Name:</strong> {report.patientName}</p>
-            <p><strong>Patient Email:</strong> {report.patientEmail}</p>
-            <p><strong>Age:</strong> {report.age} years</p>
-            <p><strong>BUN Level (mg/dL):</strong> {report.bun} - {report.bunStatus}</p>
-            <p><strong>Creatinine Level (mg/dL):</strong> {report.creatinine} - {report.creatinineStatus}</p>
-            <p><strong>BUN/Creatinine Ratio:</strong> {report.bunCreatinineRatio}</p>
-            <p><strong>Interpretation:</strong> {report.interpretation}</p>
-            <p className="overall-result"><strong>Overall Result:</strong> {report.overallResult}</p>
-            <button onClick={() => window.print()} className="btn blue-btn">Print Report</button>
-            <button onClick={uploadReport} className="btn blue-btn">Upload Report</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
 
-export default BUN; 
+export default BUN;
