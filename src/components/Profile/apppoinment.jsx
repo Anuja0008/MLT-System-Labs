@@ -200,7 +200,7 @@ const Appointments = () => {
                         onClick={() => handleDelete(appointment)}
                         style={{ padding: "8px 16px", border: "none", borderRadius: "8px", background: "linear-gradient(90deg,#e74c3c,#c0392b)", color: "#fff", cursor: "pointer", fontWeight: "bold" }}
                       >
-                        Delete
+                        Reject
                       </button>
                     </td>
                   </tr>

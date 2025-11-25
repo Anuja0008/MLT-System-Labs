@@ -103,7 +103,7 @@ const UsersList = () => {
     <Card 
       title="Users Information" 
       style={{ marginTop: 24 }}
-      extra={<Button type="primary" icon={<UserOutlined />}>Export Data</Button>}
+      // extra={<Button type="primary" icon={<UserOutlined />}>Export Data</Button>}
     >
       <Tabs defaultActiveKey="assistants">
         <TabPane tab={`Assistants (${assistants.length})`} key="assistants">
@@ -208,7 +208,7 @@ const TestPopularityPie = () => {
                 innerRadius={60}
                 paddingAngle={2}
                 labelLine={false}
-                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent }) => ` ${(percent * 100).toFixed(0)}%`}
               >
                 {data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.fill} />

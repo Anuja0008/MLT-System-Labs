@@ -140,7 +140,7 @@ function Home1() {
 
 
   <div className="image-container">
-  <h1>IDS Test</h1>
+  <h1>Lipi Profile Test</h1>
     <img className="image" src={contactImage4} alt="Contact Us" />
     <h4 className="text1">
      A Lipid Profile test measures the levels of fats, including cholesterol and triglycerides, in your blood. It helps assess your risk for heart disease and guides treatment to maintain healthy cholesterol and lipid levels.
@@ -236,18 +236,24 @@ function Home1() {
 
       
 
-{/* 
-      contact
+{
+    
       <section className="contact-section">
-        <h2>Contact Us</h2>
-        <p>Have questions? Reach out to us for more information.</p>
-        <button className="cta-button">Get in Touch</button>
-      </section> */}
+       <h2>Contact Us</h2>
+  <p>Have questions? Reach out to us for more information.</p>
+
+  <button
+    className="cta-button"
+    onClick={() => window.open("https://wa.me/94712345678", "_blank")}
+  >
+    Get in Touch on WhatsApp
+  </button>
+      </section> }
 
       {/* Footer */}
-      {/* <footer className="footer">
-        <p>&copy; 2023 LHDDiagnostics. All rights reserved.</p>
-      </footer> */}
+      { <footer className="footer">
+        <p>&copy; 2025 ArianaLabs. All rights reserved.</p>
+      </footer> }
     </div>
   );
 }
